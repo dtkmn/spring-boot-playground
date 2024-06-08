@@ -1,5 +1,7 @@
 package playground.tech.springbootplayground.entity;
 
+import java.util.Objects;
+
 public class CustomerDTO {
 
     private Long id;
@@ -35,6 +37,19 @@ public class CustomerDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerDTO that = (CustomerDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName);
     }
 
 }
