@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import playground.tech.springbootplayground.entity.CustomerDTO;
 import playground.tech.springbootplayground.repository.CustomerRepository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -18,6 +19,11 @@ public class CustomerService {
 
     public Mono<CustomerDTO> getCustomerById(Long id) {
         return customerRepository.findById(id)
+            .map(c -> new CustomerDTO(c.getId(), c.getFirstName(), c.getLastName()));
+    }
+
+    public Flux<CustomerDTO> getCustomersByLastName(String lastName) {
+        return customerRepository.findByLastName(lastName)
             .map(c -> new CustomerDTO(c.getId(), c.getFirstName(), c.getLastName()));
     }
 

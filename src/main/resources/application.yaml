@@ -1,0 +1,23 @@
+
+spring:
+  # Reactive Configuration
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/spring-boot-playground
+    username: postgres
+    password: password
+
+  # Flyway (optional, for database migrations)
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/spring-boot-playground
+    user: postgres
+    password: password
+
+  #Kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: my-group-id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer

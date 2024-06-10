@@ -8,6 +8,7 @@ import org.mockito.MockitoAnnotations;
 import playground.tech.springbootplayground.entity.Customer;
 import playground.tech.springbootplayground.entity.CustomerDTO;
 import playground.tech.springbootplayground.repository.CustomerRepository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -38,7 +39,17 @@ class CustomerServiceTest {
         when(customerRepository.findById(1L)).thenReturn(Mono.just(customer1));
         Mono<CustomerDTO> result = customerService.getCustomerById(1L);
         StepVerifier.create(result)
-            .expectNextMatches(customerDTO -> customerDTO.getFirstName().equals("John"))
+            .expectNextMatches(c -> c.firstName().equals("John") && c.lastName().equals("Doe"))
+            .verifyComplete();
+    }
+
+    @Test
+    public void testGetCustomersByLastName() {
+        when(customerRepository.findByLastName("Doe")).thenReturn(Flux.just(customer1, customer2));
+        Flux<CustomerDTO> result = customerService.getCustomersByLastName("Doe");
+        StepVerifier.create(result)
+            .expectNextMatches(c -> c.firstName().equals("John") && c.lastName().equals("Doe"))
+            .expectNextMatches(c -> c.firstName().equals("Jane") && c.lastName().equals("Doe"))
             .verifyComplete();
     }
 

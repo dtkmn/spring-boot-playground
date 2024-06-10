@@ -10,10 +10,6 @@ import playground.tech.springbootplayground.service.CustomerService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -30,16 +26,9 @@ public class CustomerController {
         return customerService.getCustomerById(id);
     }
 
-    @GetMapping("/mono")
-    public Mono<String> getMono() {
-        return Mono.just("Hello, Mono!")
-                .delayElement(Duration.ofSeconds(1));
-    }
-
-    public Flux<String> getFlux() {
-        List<String> list = Arrays.asList("Hello", "Reactive", "World");
-        return Flux.fromIterable(list)
-                .delayElements(Duration.ofSeconds(1));
+    @GetMapping("/lastname/{lastName}")
+    public Flux<CustomerDTO> getCustomersByLastName(@PathVariable String lastName) {
+        return customerService.getCustomersByLastName(lastName);
     }
 
 }
