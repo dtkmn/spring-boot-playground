@@ -1,4 +1,3 @@
-version: '3'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -31,17 +30,17 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://localhost:9092'
       # SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081/
-
-  kafdrop:
-    image: obsidiandynamics/kafdrop
-    depends_on:
-      - kafka
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: kafka:9092
-      SCHEMAREGISTRY_CONNECT: http://schema-registry:8081
-      JVM_OPTS: -Xms32M -Xmx64M
+#
+#  kafdrop:
+#    image: obsidiandynamics/kafdrop
+#    depends_on:
+#      - kafka
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      KAFKA_BROKERCONNECT: kafka:9092
+#      SCHEMAREGISTRY_CONNECT: http://schema-registry:8081
+#      JVM_OPTS: -Xms32M -Xmx64M
 
   postgres:
     image: "postgres:${POSTGRES_VERSION:-10.5}"
@@ -53,6 +52,18 @@ services:
       - "${POSTGRES_EXPORT_PORT:-5432}:5432"
     volumes:
       - "postgresData:/var/lib/postgresql/data"
+
+  app:
+    image: ghcr.io/dtkmn/spring-boot-playground:latest
+    depends_on:
+      - kafka
+      - schema-registry
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KAFKA_BROKER: kafka:9092
+      SCHEMA_REGISTRY_URL: http://schema-registry:8081
 
 volumes:
   postgresData:
