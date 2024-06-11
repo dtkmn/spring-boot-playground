@@ -21,3 +21,9 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+logging:
+  level:
+    root: INFO
+    org.springframework.data.r2dbc: DEBUG
+    io.r2dbc.postgresql: DEBUG
