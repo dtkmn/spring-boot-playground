@@ -68,6 +68,6 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        COMMIT_SHA=${{ github.sha::7 }}
-        docker build . -t ghcr.io/${{ github.repository }}:$COMMIT_SHA
-        docker push ghcr.io/${{ github.repository }}:$COMMIT_SHA
+        SHORT_SHA=$(git rev-parse --short HEAD)
+        docker build . -t ghcr.io/${{ github.repository }}:$SHORT_SHA
+        docker push ghcr.io/${{ github.repository }}:$SHORT_SHA
