@@ -15,9 +15,13 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_HEAP_OPTS: -Xmx1024M -Xms1024M
+    entrypoint: ["/bin/bash", "-c", "/etc/confluent/docker/run & /scripts/bootstrap-topics.sh"]
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
 
   schema-registry:
     image: confluentinc/cp-schema-registry:latest
@@ -27,20 +31,20 @@ services:
       - "8081:8081"
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://localhost:9092'
-      # SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+#      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081/
-#
-#  kafdrop:
-#    image: obsidiandynamics/kafdrop
-#    depends_on:
-#      - kafka
-#    ports:
-#      - "9000:9000"
-#    environment:
-#      KAFKA_BROKERCONNECT: kafka:9092
-#      SCHEMAREGISTRY_CONNECT: http://schema-registry:8081
-#      JVM_OPTS: -Xms32M -Xmx64M
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    depends_on:
+      - kafka
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9092
+      SCHEMAREGISTRY_CONNECT: http://schema-registry:8081
+      JVM_OPTS: -Xms32M -Xmx64M
 
   postgres:
     image: "postgres:${POSTGRES_VERSION:-10.5}"
@@ -53,17 +57,18 @@ services:
     volumes:
       - "postgresData:/var/lib/postgresql/data"
 
-  app:
-    image: ghcr.io/dtkmn/spring-boot-playground:latest
-    depends_on:
-      - kafka
-      - schema-registry
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      KAFKA_BROKER: kafka:9092
-      SCHEMA_REGISTRY_URL: http://schema-registry:8081
+#  app:
+#    image: ghcr.io/dtkmn/spring-boot-playground:latest
+#    depends_on:
+#      - postgres
+#      - kafka
+#      - schema-registry
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#      KAFKA_BROKER: kafka:9092
+#      SCHEMA_REGISTRY_URL: http://schema-registry:8081
 
 volumes:
   postgresData:
