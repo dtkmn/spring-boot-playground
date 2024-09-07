@@ -21,6 +21,7 @@ public class MyTopology {
         StreamsBuilder builder = new StreamsBuilder();
         // Read the topic as stream
         KStream<byte[], String> tweetStream = builder.stream("tweets", Consumed.with(Serdes.ByteArray(), Serdes.String()));
+        tweetStream.print(Printed.<byte[], String>toSysOut().withLabel("tweets"));
         // 1:N transform
         KStream<byte[], String> sentences = tweetStream.flatMapValues((k, v) -> Arrays.asList(v.split("\\.")));
         // 1:1 transform
