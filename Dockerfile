@@ -13,8 +13,8 @@ COPY settings.gradle .
 # Package the application
 RUN gradle build -x test
 
-# Use eclipse-temurin:20-jre-alpine for the runtime stage of the image
-FROM eclipse-temurin:17-jre-alpine
+# Use eclipse-temurin as the base image
+FROM eclipse-temurin:17-jre-ubi9-minimal
 
 WORKDIR /app
 

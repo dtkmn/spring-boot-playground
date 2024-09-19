@@ -21,6 +21,14 @@ public class MyTopology {
         StreamsBuilder builder = new StreamsBuilder();
         // Read the topic as stream
         KStream<byte[], String> tweetStream = builder.stream("tweets", Consumed.with(Serdes.ByteArray(), Serdes.String()));
+        tweetStream.print(Printed.<byte[], String>toSysOut().withLabel("tweets"));
+
+        // read the crypto-symbols topic as a table
+        KTable<String, String> symbolsTable =
+                builder.table("crypto-symbols", Consumed.with(Serdes.String(), Serdes.String()));
+        symbolsTable.toStream().print(Printed.<String, String>toSysOut().withLabel("crypto-symbols"));
+
+
         // 1:N transform
         KStream<byte[], String> sentences = tweetStream.flatMapValues((k, v) -> Arrays.asList(v.split("\\.")));
         // 1:1 transform

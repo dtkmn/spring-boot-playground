@@ -27,6 +27,14 @@ kafka-topics \
   --partitions 4 \
   --create
 
+# create the crypto-symbols topic
+kafka-topics \
+  --bootstrap-server kafka:9092 \
+  --topic crypto-symbols \
+  --replication-factor 1 \
+  --partitions 4 \
+  --create
+
 echo "Pre-populating Kafka topics"
 # pre-populate the tweets topic
 kafka-console-producer \
@@ -41,5 +49,12 @@ kafka-console-producer \
   --topic users \
   --property 'parse.key=true' \
   --property 'key.separator=|' < /data/users.txt
+
+
+kafka-console-producer \
+  --bootstrap-server localhost:9092 \
+  --topic crypto-symbols \
+  --property 'parse.key=true' \
+  --property 'key.separator=|' < /data/crypto-symbols.txt
 
 sleep infinity
