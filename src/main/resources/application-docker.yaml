@@ -27,3 +27,35 @@ logging:
     root: INFO
     org.springframework.data.r2dbc: DEBUG
     io.r2dbc.postgresql: DEBUG
+
+binance:
+  spot:
+    websocket:
+      url: wss://stream.binance.com:9443
+      symbols: btcusdt,ethusdt,bnbusdt
+  futures:
+    websocket:
+      url: wss://fstream.binance.com
+      symbols: btcusdt,ethusdt,bnbusdt
+    open-interest:
+      api-url: https://fapi.binance.com/futures/data/openInterestHist
+    funding-rate:
+      api-url: https://fapi.binance.com/fapi/v1/fundingRate
+
+
+# Enable JMX
+management:
+  endpoints:
+    jmx:
+      exposure:
+        include: "*"
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
