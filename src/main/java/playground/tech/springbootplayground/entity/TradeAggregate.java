@@ -10,7 +10,7 @@ public class TradeAggregate {
     }
 
     public TradeAggregate add(TradeEvent trade) {
-        this.totalPrice += trade.getPrice();
+        this.totalPrice += trade.price();
         this.tradeCount++;
         return this;
     }
