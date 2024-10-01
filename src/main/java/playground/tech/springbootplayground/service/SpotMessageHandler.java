@@ -21,13 +21,15 @@ public class SpotMessageHandler {
 
     public void handleMessage(String message) {
         try {
-            // Log the message
-            logger.info("Received message from WebSocket: {}", message);
             JsonNode jsonNode = objectMapper.readTree(message);
-            String stream = jsonNode.get("stream").asText();
             JsonNode dataNode = jsonNode.get("data");
             String symbol = dataNode.get("s").asText();
-            kafkaTemplate.send("crypto-prices", symbol, dataNode.toString());
+            kafkaTemplate.send("crypto-prices", symbol, dataNode.toString())
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        logger.error("Failed to deliver message [{}]. Error: {}", dataNode, ex.getMessage());
+                    }
+                });
         } catch (JsonProcessingException e) {
             logger.error("Failed to parse message: {}", message, e);
         }

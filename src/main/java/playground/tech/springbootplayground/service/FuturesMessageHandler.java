@@ -22,10 +22,14 @@ public class FuturesMessageHandler {
     public void handleMessage(String message) {
         try {
             JsonNode jsonNode = objectMapper.readTree(message);
-            String stream = jsonNode.get("stream").asText();
             JsonNode dataNode = jsonNode.get("data");
             String symbol = dataNode.get("s").asText();
-            kafkaTemplate.send("futures-funding-rate", symbol, dataNode.toString());
+            kafkaTemplate.send("futures-funding-rate", symbol, dataNode.toString())
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        logger.error("Failed to deliver message [{}]. Error: {}", dataNode, ex.getMessage());
+                    }
+                });
         } catch (JsonProcessingException e) {
             logger.error("Failed to parse message: {}", message, e);
         }
