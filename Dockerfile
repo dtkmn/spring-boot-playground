@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /usr/src/app/build/libs/spring-boot-playground-0.0.*.jar ./spring-boot-playground.jar
 
 # Expose the port your app runs on
-EXPOSE 8080
+EXPOSE 8080 9010
 
 # Start your application
 CMD ["java", "-jar", "./spring-boot-playground.jar"]
