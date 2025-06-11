@@ -22,6 +22,7 @@ public class BinanceWebSocketClient {
     private final String wsUrl;
     private final Consumer<String> messageHandler;
     private final WebSocketClient client;
+    private final CircuitBreaker circuitBreaker;
     private Disposable connection;
 
     public BinanceWebSocketClient(String wsUrl, Consumer<String> messageHandler,
@@ -29,17 +30,17 @@ public class BinanceWebSocketClient {
         this.wsUrl = wsUrl;
         this.messageHandler = messageHandler;
         this.client = client;
+        this.circuitBreaker = CircuitBreaker.of("websocketCircuitBreaker", setupCircuitBreakerConfig());
         startWebSocketConnection();
     }
 
-    private CircuitBreaker setupCircuitBreaker() {
-        CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+    private CircuitBreakerConfig setupCircuitBreakerConfig() {
+        return CircuitBreakerConfig.custom()
             .failureRateThreshold(50) // Percentage
             .waitDurationInOpenState(Duration.ofMinutes(1))
             .permittedNumberOfCallsInHalfOpenState(3)
             .slidingWindowSize(10)
             .build();
-        return CircuitBreaker.of("websocketCircuitBreaker", config);
     }
 
     private void startWebSocketConnection() {
@@ -50,7 +51,7 @@ public class BinanceWebSocketClient {
                 .doOnNext(messageHandler)
                 .then()
         )
-        .transformDeferred(CircuitBreakerOperator.of(setupCircuitBreaker()))
+        .transformDeferred(CircuitBreakerOperator.of(this.circuitBreaker))
         .retryWhen(Retry.backoff(5, Duration.ofSeconds(10))
             .jitter(0.5)
             .maxBackoff(Duration.ofMinutes(1))

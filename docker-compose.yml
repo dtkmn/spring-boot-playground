@@ -1,13 +1,12 @@
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.6.1
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-      # KAFKA_HEAP_OPTS: -Xmx256M -Xms256M
 
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.6.1
     depends_on:
       - zookeeper
     ports:
@@ -24,7 +23,7 @@ services:
       - ./data:/data
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:latest
+    image: confluentinc/cp-schema-registry:7.6.1
     depends_on:
       - kafka
     ports:
@@ -47,7 +46,7 @@ services:
       JVM_OPTS: -Xms32M -Xmx64M
 
   postgres:
-    image: "postgres:${POSTGRES_VERSION:-10.5}"
+    image: "postgres:${POSTGRES_VERSION:-16}"
     environment:
       POSTGRES_DB: "${POSTGRES_DB:-spring-boot-playground}"
       POSTGRES_USER: "${POSTGRES_USER:-postgres}"
@@ -56,19 +55,6 @@ services:
       - "${POSTGRES_EXPORT_PORT:-5432}:5432"
     volumes:
       - "postgresData:/var/lib/postgresql/data"
-
-#  app:
-#    image: ghcr.io/dtkmn/spring-boot-playground:latest
-#    depends_on:
-#      - postgres
-#      - kafka
-#      - schema-registry
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      SPRING_PROFILES_ACTIVE: docker
-#      KAFKA_BROKER: kafka:9092
-#      SCHEMA_REGISTRY_URL: http://schema-registry:8081
 
 volumes:
   postgresData:

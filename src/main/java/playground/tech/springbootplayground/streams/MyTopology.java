@@ -14,9 +14,10 @@ import java.util.stream.Collectors;
 @Component
 public class MyTopology {
 
+    private static final List<String> SUPPORTED_CURRENCIES = Arrays.asList("dogecoin", "bitcoin", "ethereum");
+
     @Autowired
     public void buildTopology(StreamsBuilder builder) {
-//        StreamsBuilder builder = new StreamsBuilder();
         // Read the topic as stream
         KStream<byte[], String> tweetStream = builder.stream("tweets", Consumed.with(Serdes.ByteArray(), Serdes.String()));
         tweetStream.print(Printed.<byte[], String>toSysOut().withLabel("tweets"));
@@ -40,7 +41,6 @@ public class MyTopology {
         KTable<String, Long> counts = tweetsRekeyed
                 .groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
                 .count();
-//        counts.toStream().print(Printed.<String, Long>toSysOut().withLabel("counts"));
         counts.toStream().to("counts-tweets", Produced.with(Serdes.String(), Serdes.Long()));
 
 
@@ -69,11 +69,11 @@ public class MyTopology {
 
         // Tumbling Windows
         TimeWindows window = TimeWindows.of(Duration.ofMinutes(5));
-        // Hopping Windows
+        // Example of Hopping Windows:
 //        TimeWindows window = TimeWindows.of(Duration.ofMinutes(5)).advanceBy(Duration.ofMinutes(4));
-        // Session Windows
+        // Example of Session Windows:
 //        SessionWindows window = SessionWindows.with(Duration.ofMinutes(5));
-        // Sliding Aggregation Windows
+        // Example of Sliding Aggregation Windows:
 //        SlidingWindows window =
 //                SlidingWindows.withTimeDifferenceAndGrace(
 //                        Duration.ofMinutes(5), // max time diff between 2 records
@@ -88,7 +88,6 @@ public class MyTopology {
                 .map((windowKey, value) -> createAlert(windowKey, value))
                 .to("alerts", Produced.with(Serdes.String(), Serdes.String()));
 
-//        return builder.build();
     }
 
     private static KeyValue<String, String> createAlert(Windowed<String> windowKey, Long value) {
@@ -97,31 +96,31 @@ public class MyTopology {
         return KeyValue.pair(userId, alert);
     }
 
-//    private String getCurrency(byte[] key, String tweetText) {
-//        List<String> currencies = Arrays.asList("dogecoin", "bitcoin", "ethereum");
-//        for (String currency: currencies) {
-//            if (tweetText.contains(currency)) {
-//                return currency;
-//            }
-//        }
-//        return "";
-//    }
-
     public List<String> getCurrencies(String tweetText) {
-        List<String> currencies = Arrays.asList("dogecoin", "bitcoin", "ethereum");
         List<String> words =
                 Arrays.asList(tweetText.replaceAll("[^a-zA-Z ]", "").toLowerCase().trim().split(" "));
-        return words.stream().distinct().filter(currencies::contains).collect(Collectors.toList());
+        return words.stream().distinct().filter(SUPPORTED_CURRENCIES::contains).collect(Collectors.toList());
     }
 
+    /**
+     * Extracts the first supported currency found in the tweet text.
+     * The order of currencies in SUPPORTED_CURRENCIES does not determine priority here;
+     * instead, the first currency mentioned in the tweet text that is also in SUPPORTED_CURRENCIES is returned.
+     * If multiple supported currencies are present, the one appearing earliest in the tweet (after splitting and filtering) is chosen.
+     * @param key the key of the Kafka message
+     * @param tweetText the text of the tweet
+     * @return the first supported currency found, or an empty string if no supported currency is found.
+     */
     public String getCurrency(byte[] key, String tweetText) {
         List<String> currencies = getCurrencies(tweetText);
         if (!currencies.isEmpty()) {
+            // "First currency wins" based on the order of appearance in the tweet text
             return currencies.get(0);
         }
         return "";
     }
 
+    // TODO: Implement actual enrichment logic for Ethereum-related tweets
     private String enrichEthTweet(String tweet) {
         return tweet;
     }
