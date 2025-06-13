@@ -19,7 +19,7 @@ FROM eclipse-temurin:21-jre-ubi9-minimal
 WORKDIR /app
 
 # Copy the jar file from the build stage
-COPY --from=builder /usr/src/app/build/libs/spring-boot-playground-0.0.*.jar ./spring-boot-playground.jar
+COPY --from=builder /usr/src/app/build/libs/spring-boot-playground-0.1.*.jar ./spring-boot-playground.jar
 
 # Expose the port your app runs on
 EXPOSE 8080 9010

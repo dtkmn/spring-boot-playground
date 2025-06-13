@@ -73,17 +73,22 @@ services:
     volumes:
       - "postgresData:/var/lib/postgresql/data"
 
-#  app:
-#    image: ghcr.io/dtkmn/spring-boot-playground:latest
-#    depends_on:
-#      - postgres
-#      - kafka
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/dtkmn/spring-boot-playground:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
 #      - schema-registry
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      SPRING_PROFILES_ACTIVE: docker
-#      KAFKA_BROKER: kafka:9092
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KAFKA_BROKER: kafka:9092
 #      SCHEMA_REGISTRY_URL: http://schema-registry:8081
 
 volumes:
