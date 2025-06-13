@@ -3,15 +3,14 @@ package playground.tech.springbootplayground.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class FuturesMessageHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(FuturesMessageHandler.class);
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -27,11 +26,11 @@ public class FuturesMessageHandler {
             kafkaTemplate.send("futures-funding-rate", symbol, dataNode.toString())
                 .whenComplete((result, ex) -> {
                     if (ex != null) {
-                        logger.error("Failed to deliver message [{}]. Error: {}", dataNode, ex.getMessage());
+                        log.error("Failed to deliver message [{}]. Error: {}", dataNode, ex.getMessage());
                     }
                 });
-        } catch (JsonProcessingException e) {
-            logger.error("Failed to parse message: {}", message, e);
+        } catch (Exception e) {
+            log.error("Failed to deliver message [{}]. Error: {}", message, e.getMessage());
         }
     }
 }
