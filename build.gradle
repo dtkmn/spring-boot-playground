@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.0'
+	id 'org.springframework.boot' version '3.5.3'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -35,7 +35,7 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.apache.kafka:kafka-streams'
 	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
-	implementation 'io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE'
+	implementation 'org.postgresql:r2dbc-postgresql:1.0.7.RELEASE'
 	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
 	implementation 'io.github.resilience4j:resilience4j-reactor:2.2.0'
 
