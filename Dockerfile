@@ -1,6 +1,6 @@
 # Use the official gradle image to create a build artifact.
 # This is based on Debian and sets the GRADLE_HOME environment variable
-FROM gradle:8.14.2-jdk21 as builder
+FROM gradle:9.1.0-jdk21 AS builder
 
 # Set the working directory in the image
 WORKDIR /usr/src/app
