@@ -42,7 +42,7 @@ services:
     environment:
       POSTGRES_DB: "${POSTGRES_DB:-spring-boot-playground}"
       POSTGRES_USER: "${POSTGRES_USER:-postgres}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}"
     ports:
       - "${POSTGRES_EXPORT_PORT:-5432}:5432"
     healthcheck:
@@ -69,6 +69,11 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       KAFKA_BROKER: kafka:9092
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: "${POSTGRES_DB:-spring-boot-playground}"
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}"
 #      SCHEMA_REGISTRY_URL: http://schema-registry:8081
 
 volumes:
