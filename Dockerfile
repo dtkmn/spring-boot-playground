@@ -13,7 +13,6 @@ COPY settings.gradle .
 # Package the application
 RUN gradle build -x test
 
-# Use eclipse-temurin as the base image
 FROM eclipse-temurin:21-jre-ubi9-minimal
 
 WORKDIR /app
