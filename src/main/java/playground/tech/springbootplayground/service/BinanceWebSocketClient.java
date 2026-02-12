@@ -43,21 +43,26 @@ public class BinanceWebSocketClient {
     }
 
     private void startWebSocketConnection() {
+        logger.info("Starting WebSocket connection to: {}", wsUrl);
         connection = client.execute(
             URI.create(wsUrl),
-            session -> session.receive()
-                .map(WebSocketMessage::getPayloadAsText)
-                .doOnNext(messageHandler)
-                .then()
+            session -> {
+                logger.info("WebSocket session established to: {}", wsUrl);
+                return session.receive()
+                    .map(WebSocketMessage::getPayloadAsText)
+                    .doOnNext(msg -> logger.debug("Received message: {}", msg.substring(0, Math.min(100, msg.length()))))
+                    .doOnNext(messageHandler)
+                    .then();
+            }
         )
         .transformDeferred(CircuitBreakerOperator.of(setupCircuitBreaker()))
-        .retryWhen(Retry.backoff(5, Duration.ofSeconds(10))
+        .retryWhen(Retry.backoff(Long.MAX_VALUE, Duration.ofSeconds(10))
             .jitter(0.5)
             .maxBackoff(Duration.ofMinutes(1))
             .doBeforeRetry(retrySignal -> logger.warn("Retrying connection... Attempt: {}", retrySignal.totalRetries() + 1))
-            .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> retrySignal.failure())
         )
         .doOnError(error -> logger.error("Failed to establish WebSocket connection: ", error))
+        .doOnSubscribe(sub -> logger.info("Subscribing to WebSocket: {}", wsUrl))
         .subscribe();
     }
 
