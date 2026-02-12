@@ -2,16 +2,16 @@
 spring:
   # Reactive Configuration
   r2dbc:
-    url: r2dbc:postgresql://postgres:5432/spring-boot-playground
-    username: postgres
-    password: password
+    url: r2dbc:postgresql://${POSTGRES_HOST:postgres}:${POSTGRES_PORT:5432}/${POSTGRES_DB:spring-boot-playground}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:change-me}
 
   # Flyway (optional, for database migrations)
   flyway:
     enabled: true
-    url: jdbc:postgresql://postgres:5432/spring-boot-playground
-    user: postgres
-    password: password
+    url: jdbc:postgresql://${POSTGRES_HOST:postgres}:${POSTGRES_PORT:5432}/${POSTGRES_DB:spring-boot-playground}
+    user: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:change-me}
 
   #Kafka
   kafka:
@@ -25,18 +25,22 @@ spring:
 logging:
   level:
     root: INFO
-    org.springframework.data.r2dbc: DEBUG
-    io.r2dbc.postgresql: DEBUG
+    org.springframework.data.r2dbc: INFO
+    io.r2dbc.postgresql: INFO
 
 binance:
   spot:
     websocket:
       url: wss://stream.binance.com:9443
-      symbols: btcusdt,ethusdt,bnbusdt
+      symbols:
+        - btcusdt
+        - ethusdt
   futures:
     websocket:
       url: wss://fstream.binance.com
-      symbols: btcusdt,ethusdt,bnbusdt
+      symbols:
+        - btcusdt
+        - ethusdt
     open-interest:
       api-url: https://fapi.binance.com/futures/data/openInterestHist
     funding-rate:

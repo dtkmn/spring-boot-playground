@@ -1,60 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BOOTSTRAP_SERVER="${KAFKA_BOOTSTRAP_SERVER:-localhost:9092}"
+
 echo "Waiting for Kafka to come online..."
+cub kafka-ready -b "${BOOTSTRAP_SERVER}" 1 20
 
-cub kafka-ready -b localhost:9092 1 20
+echo "Creating Kafka topics..."
+create_topic() {
+  local topic="$1"
+  kafka-topics \
+    --bootstrap-server "${BOOTSTRAP_SERVER}" \
+    --topic "${topic}" \
+    --replication-factor 1 \
+    --partitions 4 \
+    --create \
+    --if-not-exists
+}
 
-echo "Creating Kafka topics"
-# create the tweets topic
-kafka-topics \
-  --bootstrap-server localhost:9092 \
-  --topic tweets \
-  --replication-factor 1 \
-  --partitions 4 \
-  --create
+create_topic "tweets"
+create_topic "formatted-tweets"
+create_topic "users"
+create_topic "crypto-symbols"
+create_topic "crypto-prices"
+create_topic "moving-average-topic"
+create_topic "counts-tweets"
 
-# create output topic
-kafka-topics \
-  --bootstrap-server localhost:9092 \
-  --topic formatted-tweets \
-  --replication-factor 1 \
-  --partitions 4 \
-  --create
-
-# create the users topic
-kafka-topics \
-  --bootstrap-server localhost:9092 \
-  --topic users \
-  --replication-factor 1 \
-  --partitions 4 \
-  --create
-
-# create the crypto-symbols topic
-kafka-topics \
-  --bootstrap-server kafka:9092 \
-  --topic crypto-symbols \
-  --replication-factor 1 \
-  --partitions 4 \
-  --create
-
-echo "Pre-populating Kafka topics"
-# pre-populate the tweets topic
+echo "Pre-populating Kafka topics..."
 kafka-console-producer \
-  --bootstrap-server localhost:9092 \
+  --bootstrap-server "${BOOTSTRAP_SERVER}" \
   --topic tweets \
   --property 'parse.key=true' \
   --property 'key.separator=|' < /data/inputs.txt
 
-# pre-populate the users topic
 kafka-console-producer \
-  --bootstrap-server localhost:9092 \
+  --bootstrap-server "${BOOTSTRAP_SERVER}" \
   --topic users \
   --property 'parse.key=true' \
   --property 'key.separator=|' < /data/users.txt
 
-
 kafka-console-producer \
-  --bootstrap-server localhost:9092 \
+  --bootstrap-server "${BOOTSTRAP_SERVER}" \
   --topic crypto-symbols \
   --property 'parse.key=true' \
   --property 'key.separator=|' < /data/crypto-symbols.txt
 
-sleep infinity
+echo "Kafka bootstrap completed."

@@ -1,6 +1,6 @@
 # Use the official gradle image to create a build artifact.
 # This is based on Debian and sets the GRADLE_HOME environment variable
-FROM gradle:9.1.0-jdk21 AS builder
+FROM gradle:9.3.1-jdk21 AS builder
 
 # Set the working directory in the image
 WORKDIR /usr/src/app
@@ -13,7 +13,6 @@ COPY settings.gradle .
 # Package the application
 RUN gradle build -x test
 
-# Use eclipse-temurin as the base image
 FROM eclipse-temurin:21-jre-ubi9-minimal
 
 WORKDIR /app
