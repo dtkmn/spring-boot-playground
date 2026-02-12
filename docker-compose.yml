@@ -18,14 +18,15 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_HEAP_OPTS: -Xmx1024M -Xms1024M
     healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "9092" ]
+      test: [ "CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list" ]
       interval: 10s
       timeout: 5s
       retries: 10
-    entrypoint: ["/bin/bash", "-c", "/scripts/bootstrap-topics.sh & exec /etc/confluent/docker/run"]
+      start_period: 30s
     volumes:
       - ./scripts:/scripts
       - ./data:/data
+    entrypoint: ["/bin/bash", "-c", "/etc/confluent/docker/run & sleep 15 && /scripts/bootstrap-topics.sh && wait"]
 
   kafdrop:
     image: obsidiandynamics/kafdrop:4.1.0
