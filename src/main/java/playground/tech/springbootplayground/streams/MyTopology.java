@@ -5,6 +5,7 @@ import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -14,27 +15,38 @@ import java.util.stream.Collectors;
 @Component
 public class MyTopology {
 
+    @Value("${app.streams.debug-print:false}")
+    private boolean debugPrint;
+
     @Autowired
     public void buildTopology(StreamsBuilder builder) {
 //        StreamsBuilder builder = new StreamsBuilder();
         // Read the topic as stream
         KStream<byte[], String> tweetStream = builder.stream("tweets", Consumed.with(Serdes.ByteArray(), Serdes.String()));
-        tweetStream.print(Printed.<byte[], String>toSysOut().withLabel("tweets"));
+        if (debugPrint) {
+            tweetStream.print(Printed.<byte[], String>toSysOut().withLabel("tweets"));
+        }
 
         // read the crypto-symbols topic as a table
         KTable<String, String> symbolsTable =
                 builder.table("crypto-symbols", Consumed.with(Serdes.String(), Serdes.String()));
-        symbolsTable.toStream().print(Printed.<String, String>toSysOut().withLabel("crypto-symbols"));
+        if (debugPrint) {
+            symbolsTable.toStream().print(Printed.<String, String>toSysOut().withLabel("crypto-symbols"));
+        }
 
         // Change the key format of tweet stream from byte[]/numeric to String before doing any join
         KStream<String, String> tweetsRekeyed = tweetStream.selectKey(this::getCurrency);
-        tweetsRekeyed.print(Printed.<String, String>toSysOut().withLabel("tweets-rekeyed"));
+        if (debugPrint) {
+            tweetsRekeyed.print(Printed.<String, String>toSysOut().withLabel("tweets-rekeyed"));
+        }
 
 //        // join
         KStream<String, String> joined = tweetsRekeyed.join(symbolsTable,
                 (tweet, symbol) -> String.format("%s - (%s)", tweet, symbol),
                 Joined.with(Serdes.String(), Serdes.String(), Serdes.String()));
-        joined.print(Printed.<String, String>toSysOut().withLabel("joined"));
+        if (debugPrint) {
+            joined.print(Printed.<String, String>toSysOut().withLabel("joined"));
+        }
 
         // count
         KTable<String, Long> counts = tweetsRekeyed
