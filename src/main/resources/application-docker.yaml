@@ -32,11 +32,15 @@ binance:
   spot:
     websocket:
       url: wss://stream.binance.com:9443
-      symbols: btcusdt,ethusdt,bnbusdt
+      symbols:
+        - btcusdt
+        - ethusdt
   futures:
     websocket:
       url: wss://fstream.binance.com
-      symbols: btcusdt,ethusdt,bnbusdt
+      symbols:
+        - btcusdt
+        - ethusdt
     open-interest:
       api-url: https://fapi.binance.com/futures/data/openInterestHist
     funding-rate:
