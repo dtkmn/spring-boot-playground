@@ -5,7 +5,7 @@ on:
     branches: ["main", "dev"]
     tags: ["v*"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "dev"]
 
 jobs:
   generate-and-test:
@@ -70,6 +70,7 @@ jobs:
           test -f "generated/${{ matrix.artifact }}/.github/dependabot.yaml"
           test -f "generated/${{ matrix.artifact }}/SUPPORT.md"
           test -f "generated/${{ matrix.artifact }}/CHANGELOG.md"
+          test -f "generated/${{ matrix.artifact }}/RELEASING.md"
           test -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml"
           test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
           test -f "generated/${{ matrix.artifact }}/scripts/smoke-test.sh"

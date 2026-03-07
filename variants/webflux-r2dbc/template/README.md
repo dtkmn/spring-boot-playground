@@ -72,3 +72,5 @@ Create and push a `v*` tag to publish the container image to GHCR:
 git tag v1.0.0
 git push origin v1.0.0
 ```
+
+Release tags must be created from commits already promoted to `main`. See `RELEASING.md` for the full release checklist.

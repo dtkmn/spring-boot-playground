@@ -10,4 +10,5 @@ Generated services from this variant include:
 - Docker Compose local stack
 - starter CI workflow and tag-gated image publish workflow
 - Dependabot plus baseline support/changelog docs
+- release process guidance in `RELEASING.md`
 - vendored Helm chart and environment values

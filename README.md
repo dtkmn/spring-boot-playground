@@ -52,6 +52,7 @@ Generated services now include:
 - a starter CI workflow under `.github/workflows/ci.yml`
 - a tag-gated publish workflow under `.github/workflows/publish.yml`
 - Dependabot and baseline support/changelog docs
+- `RELEASING.md` with branch and tag rules
 - Docker Compose and local env template
 - a vendored Helm chart under `deploy/helm/spring-service-starter`
 - service-specific Helm values for dev, staging, and prod
@@ -112,6 +113,7 @@ Default deployment assumptions:
 
 - `SUPPORT.md`: support window and update cadence
 - `CHANGELOG.md`: release history
+- `RELEASING.md`: release process and stabilization rules
 - `CONTRIBUTING.md`: contribution and review rules
 - `docs/adr`: architectural decisions
 

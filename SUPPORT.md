@@ -9,6 +9,12 @@ This starter is optimized for internal engineering teams.
 - Quarterly stable dependency and framework updates
 - Out-of-band patches only for security issues or critical regressions
 
+## Release Channel
+
+- `dev`: active integration branch
+- `main`: stabilized release branch
+- `v*` tags: immutable release points
+
 ## Compatibility Baseline
 
 - Java 21
