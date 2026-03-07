@@ -46,6 +46,14 @@ Generate a new service from the default variant:
 
 Output is created under `generated/<artifact-id>` by default.
 
+Generated services now include:
+- application code for the selected variant
+- `.gitignore`
+- a starter CI workflow under `.github/workflows/ci.yml`
+- Docker Compose and local env template
+- a vendored Helm chart under `deploy/helm/spring-service-starter`
+- service-specific Helm values for dev, staging, and prod
+
 ## Variants
 
 ### `mvc-jpa`
