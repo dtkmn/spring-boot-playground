@@ -1,7 +1,20 @@
 # Kafka Streams Example
 
-Purpose:
-- show how to add a Kafka Streams topology when a service actually needs stream processing
-- avoid embedding Kafka Streams into the default starter path
+This example demonstrates two common stream-processing patterns:
+- topic joins and tweet enrichment
+- trade aggregation and alert generation
 
-This example is intentionally separate from the starter variants.
+## Run locally
+
+```bash
+./gradlew -p examples/kafka-streams test
+cp examples/kafka-streams/.env.example examples/kafka-streams/.env
+cd examples/kafka-streams && docker compose --env-file .env up --build
+```
+
+Bootstrap data is loaded into Kafka automatically when the example starts.
+
+Default ports:
+- app: `8083`
+- Kafka broker: `9092`
+- Kafdrop: `9000`

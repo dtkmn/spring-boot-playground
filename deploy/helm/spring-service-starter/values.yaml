@@ -1,7 +1,10 @@
+nameOverride: ""
+fullnameOverride: ""
+
 replicaCount: 1
 
 image:
-  repository: ghcr.io/dtkmn/spring-boot-playground
+  repository: ghcr.io/example-org/example-service
   tag: latest
   pullPolicy: IfNotPresent
 
