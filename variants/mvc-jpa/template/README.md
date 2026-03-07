@@ -19,6 +19,7 @@ Spring MVC + JPA starter service generated from the Spring Service Starter repos
 cp .env.example .env
 ./gradlew test
 ./gradlew bootRun
+./scripts/smoke-test.sh
 ```
 
 ## Local container workflow
@@ -37,6 +38,16 @@ Default ports:
 - `GET /api/v1/customers`
 - `GET /api/v1/customers/{id}`
 - `POST /api/v1/customers`
+
+## Error contract
+
+Application errors return a stable JSON envelope with:
+- `timestamp`
+- `status`
+- `error`
+- `message`
+- `path`
+- `validationErrors`
 
 The starter seeds one customer record through Flyway so health and API checks have immediate data.
 

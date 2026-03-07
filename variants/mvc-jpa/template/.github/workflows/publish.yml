@@ -31,6 +31,9 @@ jobs:
           cp .env.example .env
           docker compose --env-file .env config
 
+      - name: Smoke test starter
+        run: ./scripts/smoke-test.sh
+
       - name: Set up Helm
         uses: azure/setup-helm@v4
 

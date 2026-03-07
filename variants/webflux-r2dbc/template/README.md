@@ -19,6 +19,7 @@ Spring WebFlux + R2DBC starter service generated from the Spring Service Starter
 cp .env.example .env
 ./gradlew test
 ./gradlew bootRun
+./scripts/smoke-test.sh
 ```
 
 ## Local container workflow

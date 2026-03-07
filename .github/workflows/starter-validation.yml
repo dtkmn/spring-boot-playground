@@ -17,9 +17,15 @@ jobs:
           - variant: mvc-jpa
             artifact: demo-mvc-jpa
             package_name: tech.company.platform.demomvcjpa
+            app_port: 18080
+            management_port: 18081
+            postgres_port: 15432
           - variant: webflux-r2dbc
             artifact: demo-webflux-r2dbc
             package_name: tech.company.platform.demowebflux
+            app_port: 28080
+            management_port: 28081
+            postgres_port: 25432
     steps:
       - uses: actions/checkout@v5
 
@@ -44,12 +50,14 @@ jobs:
       - name: Test generated starter
         run: ./gradlew -p "generated/${{ matrix.artifact }}" test --no-daemon
 
-      - name: Build generated Docker image
-        run: docker build -t "starter-${{ matrix.variant }}:ci" "generated/${{ matrix.artifact }}"
-
       - name: Validate generated Docker Compose
         run: |
           cp "generated/${{ matrix.artifact }}/.env.example" "generated/${{ matrix.artifact }}/.env"
+          {
+            echo "APP_HOST_PORT=${{ matrix.app_port }}"
+            echo "MANAGEMENT_HOST_PORT=${{ matrix.management_port }}"
+            echo "POSTGRES_EXPORT_PORT=${{ matrix.postgres_port }}"
+          } >> "generated/${{ matrix.artifact }}/.env"
           docker compose -f "generated/${{ matrix.artifact }}/docker-compose.yml" --env-file "generated/${{ matrix.artifact }}/.env" config
 
       - name: Check generated starter assets
@@ -64,6 +72,12 @@ jobs:
           test -f "generated/${{ matrix.artifact }}/CHANGELOG.md"
           test -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml"
           test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
+          test -f "generated/${{ matrix.artifact }}/scripts/smoke-test.sh"
+
+      - name: Smoke test generated starter
+        run: |
+          cd "generated/${{ matrix.artifact }}"
+          ./scripts/smoke-test.sh
 
       - name: Helm lint generated starter chart
         run: helm lint "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"

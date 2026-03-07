@@ -29,3 +29,8 @@ management:
     health:
       probes:
         enabled: true
+
+logging:
+  level:
+    __PACKAGE_NAME__: INFO
+    org.springframework.web: INFO

@@ -43,4 +43,14 @@ class CustomerApiIntegrationTest {
             .andExpect(jsonPath("$[0].firstName").value("John"))
             .andExpect(jsonPath("$[0].lastName").value("Doe"));
     }
+
+    @Test
+    void shouldReturnNotFoundErrorEnvelope() throws Exception {
+        mockMvc.perform(get("/api/v1/customers/999"))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.status").value(404))
+            .andExpect(jsonPath("$.error").value("Not Found"))
+            .andExpect(jsonPath("$.message").value("Customer not found"))
+            .andExpect(jsonPath("$.path").value("/api/v1/customers/999"));
+    }
 }

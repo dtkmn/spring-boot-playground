@@ -24,13 +24,13 @@ jobs:
       - name: Run tests
         run: ./gradlew test --no-daemon
 
-      - name: Build Docker image
-        run: docker build -t app:ci .
-
       - name: Validate Docker Compose
         run: |
           cp .env.example .env
           docker compose --env-file .env config
+
+      - name: Smoke test starter
+        run: ./scripts/smoke-test.sh
 
   helm-validate:
     runs-on: ubuntu-latest
