@@ -1,54 +1,58 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.8'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'base'
 }
 
-group = 'playground.springboot'
-version = '0.1.0-SNAPSHOT'
+description = 'Spring service starter repository scaffolding and validation'
 
-java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+tasks.register('validateRepositoryLayout') {
+    doLast {
+        [
+            'variants/mvc-jpa',
+            'variants/mvc-jpa/template/.gitignore',
+            'variants/mvc-jpa/template/.dockerignore',
+            'variants/mvc-jpa/template/README.md',
+            'variants/mvc-jpa/template/.github/workflows/ci.yml',
+            'variants/mvc-jpa/template/.github/workflows/publish.yml',
+            'variants/mvc-jpa/template/.github/dependabot.yaml',
+            'variants/mvc-jpa/template/SUPPORT.md',
+            'variants/mvc-jpa/template/CHANGELOG.md',
+            'variants/mvc-jpa/template/RELEASING.md',
+            'variants/mvc-jpa/template/scripts/smoke-test.sh',
+            'variants/mvc-jpa/template/deploy/helm/values-dev.yaml',
+            'variants/mvc-jpa/template/deploy/helm/values-staging.yaml',
+            'variants/mvc-jpa/template/deploy/helm/values-prod.yaml',
+            'variants/webflux-r2dbc',
+            'variants/webflux-r2dbc/template/.gitignore',
+            'variants/webflux-r2dbc/template/.dockerignore',
+            'variants/webflux-r2dbc/template/README.md',
+            'variants/webflux-r2dbc/template/.github/workflows/ci.yml',
+            'variants/webflux-r2dbc/template/.github/workflows/publish.yml',
+            'variants/webflux-r2dbc/template/.github/dependabot.yaml',
+            'variants/webflux-r2dbc/template/SUPPORT.md',
+            'variants/webflux-r2dbc/template/CHANGELOG.md',
+            'variants/webflux-r2dbc/template/RELEASING.md',
+            'variants/webflux-r2dbc/template/scripts/smoke-test.sh',
+            'variants/webflux-r2dbc/template/deploy/helm/values-dev.yaml',
+            'variants/webflux-r2dbc/template/deploy/helm/values-staging.yaml',
+            'variants/webflux-r2dbc/template/deploy/helm/values-prod.yaml',
+            'examples/kafka-basic',
+            'examples/kafka-streams',
+            'examples/binance-websocket',
+            'deploy/helm/spring-service-starter',
+            'deploy/helm/spring-service-starter/values.schema.json',
+            '.github/ISSUE_TEMPLATE/pilot-feedback.yml',
+            'docs/adoption/pilot-playbook.md',
+            'docs/releases/release-readiness-checklist.md',
+            'RELEASING.md',
+            'scripts/init-service.sh'
+        ].each { path ->
+            if (!file(path).exists()) {
+                throw new GradleException("Missing required repository path: ${path}")
+            }
+        }
+    }
 }
 
-ext {
-	set('testcontainersVersion', '1.21.3')
-}
-
-repositories {
-	mavenCentral()
-}
-
-dependencyManagement {
-	imports {
-		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
-	}
-}
-
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'io.micrometer:micrometer-registry-prometheus'
-	implementation 'org.springframework.kafka:spring-kafka'
-	implementation 'org.apache.kafka:kafka-streams'
-	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
-	implementation 'org.postgresql:r2dbc-postgresql:1.1.1.RELEASE'
-	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.3.0'
-	implementation 'io.github.resilience4j:resilience4j-reactor:2.3.0'
-
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:kafka'
-	testImplementation 'org.testcontainers:postgresql'
-	testImplementation 'io.projectreactor:reactor-test'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
+tasks.named('check') {
+    dependsOn 'validateRepositoryLayout'
 }

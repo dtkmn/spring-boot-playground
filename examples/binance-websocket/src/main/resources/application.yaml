@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: binance-websocket-example
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
+
+binance:
+  spot:
+    websocket:
+      url: ${BINANCE_WS_URL:wss://stream.binance.com:9443}
+      symbols:
+        - btcusdt
+        - ethusdt
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

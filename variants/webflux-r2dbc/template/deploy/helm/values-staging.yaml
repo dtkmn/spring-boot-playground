@@ -1,0 +1,39 @@
+image:
+  repository: ghcr.io/example-org/__ARTIFACT_ID__
+  tag: staging
+
+service:
+  port: __APP_PORT__
+
+management:
+  port: __MANAGEMENT_PORT__
+
+secrets:
+  existingSecret: __ARTIFACT_ID__-db
+
+postgres:
+  enabled: true
+  host: postgres.staging.svc.cluster.local
+  port: 5432
+  database: __ARTIFACT_ID__
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+
+ingress:
+  enabled: true
+  hosts:
+    - host: __ARTIFACT_ID__.staging.example.internal
+      paths:
+        - path: /
+          pathType: Prefix

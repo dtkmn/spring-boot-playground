@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: kafka-streams-example
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
+
+app:
+  streams:
+    debug-print: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
