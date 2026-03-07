@@ -48,8 +48,10 @@ Output is created under `generated/<artifact-id>` by default.
 
 Generated services now include:
 - application code for the selected variant
-- `.gitignore`
+- `.dockerignore` and `.gitignore`
 - a starter CI workflow under `.github/workflows/ci.yml`
+- a tag-gated publish workflow under `.github/workflows/publish.yml`
+- Dependabot and baseline support/changelog docs
 - Docker Compose and local env template
 - a vendored Helm chart under `deploy/helm/spring-service-starter`
 - service-specific Helm values for dev, staging, and prod
