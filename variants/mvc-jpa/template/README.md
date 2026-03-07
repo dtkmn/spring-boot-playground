@@ -62,3 +62,12 @@ helm upgrade --install __ARTIFACT_ID__ deploy/helm/spring-service-starter \
 ```
 
 Service-specific deployment values live under `deploy/helm/`.
+
+## Release workflow
+
+Create and push a `v*` tag to publish the container image to GHCR:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```

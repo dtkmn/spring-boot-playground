@@ -8,5 +8,6 @@ Generated services from this variant include:
 - Spring MVC + Spring Data JPA baseline
 - PostgreSQL + Flyway
 - Docker Compose local stack
-- starter CI workflow
+- starter CI workflow and tag-gated image publish workflow
+- Dependabot plus baseline support/changelog docs
 - vendored Helm chart and environment values
