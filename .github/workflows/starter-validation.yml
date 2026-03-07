@@ -55,8 +55,13 @@ jobs:
       - name: Check generated starter assets
         run: |
           test -f "generated/${{ matrix.artifact }}/README.md"
+          test -f "generated/${{ matrix.artifact }}/.dockerignore"
           test -f "generated/${{ matrix.artifact }}/.gitignore"
           test -f "generated/${{ matrix.artifact }}/.github/workflows/ci.yml"
+          test -f "generated/${{ matrix.artifact }}/.github/workflows/publish.yml"
+          test -f "generated/${{ matrix.artifact }}/.github/dependabot.yaml"
+          test -f "generated/${{ matrix.artifact }}/SUPPORT.md"
+          test -f "generated/${{ matrix.artifact }}/CHANGELOG.md"
           test -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml"
           test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
 
