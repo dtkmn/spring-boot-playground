@@ -88,6 +88,7 @@ esac
 script_dir=$(cd "$(dirname "$0")" && pwd)
 repo_root=$(cd "$script_dir/.." && pwd)
 template_dir="$repo_root/variants/$variant/template"
+shared_chart_dir="$repo_root/deploy/helm/spring-service-starter"
 output_dir=${output_dir:-"$repo_root/generated/$artifact_id"}
 package_path=${package_name//./\/}
 
@@ -103,6 +104,11 @@ fi
 
 mkdir -p "$output_dir"
 cp -R "$template_dir/." "$output_dir"
+
+if [[ -d "$shared_chart_dir" ]]; then
+  mkdir -p "$output_dir/deploy/helm"
+  cp -R "$shared_chart_dir" "$output_dir/deploy/helm/"
+fi
 
 while IFS= read -r -d '' dir; do
   target_dir=$(dirname "$dir")/$package_path
