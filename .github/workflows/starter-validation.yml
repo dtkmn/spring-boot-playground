@@ -52,6 +52,24 @@ jobs:
           cp "generated/${{ matrix.artifact }}/.env.example" "generated/${{ matrix.artifact }}/.env"
           docker compose -f "generated/${{ matrix.artifact }}/docker-compose.yml" --env-file "generated/${{ matrix.artifact }}/.env" config
 
+      - name: Check generated starter assets
+        run: |
+          test -f "generated/${{ matrix.artifact }}/README.md"
+          test -f "generated/${{ matrix.artifact }}/.gitignore"
+          test -f "generated/${{ matrix.artifact }}/.github/workflows/ci.yml"
+          test -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml"
+          test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
+
+      - name: Helm lint generated starter chart
+        run: helm lint "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
+
+      - name: Helm template generated starter chart
+        run: |
+          helm template "${{ matrix.artifact }}" "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter" \
+            -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml" \
+            --set image.repository="ghcr.io/example/${{ matrix.artifact }}" \
+            --set image.tag=test
+
   helm-validation:
     runs-on: ubuntu-latest
     steps:
