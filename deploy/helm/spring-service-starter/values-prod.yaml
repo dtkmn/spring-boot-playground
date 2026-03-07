@@ -1,0 +1,15 @@
+image:
+  tag: prod
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 6
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi

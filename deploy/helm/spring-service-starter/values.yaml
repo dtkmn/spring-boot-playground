@@ -1,0 +1,43 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/dtkmn/spring-boot-playground
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+management:
+  port: 8081
+
+env: {}
+
+secrets:
+  existingSecret: ""
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: spring-service-starter.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+postgres:
+  enabled: true
+  host: postgresql.default.svc.cluster.local
+  port: 5432
+  database: app
