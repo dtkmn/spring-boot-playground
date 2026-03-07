@@ -1,0 +1,21 @@
+# Gradle
+.gradle/
+.gradle-local/
+build/
+
+# IDE files
+.idea/
+*.iml
+out/
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+
+# Generated starter outputs
+generated/
+
+# Local env files
+.env
