@@ -8,6 +8,7 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 
 ### Added
 - Formal release process and stabilization rules for the starter repository
+- Pilot playbook, pilot feedback template, and release readiness checklist
 
 ### Changed
 - Reposition repository from playground to Spring service starter

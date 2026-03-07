@@ -29,6 +29,8 @@ The default starter contract does not include:
 - `examples/binance-websocket`: websocket-to-Kafka market-data example
 - `deploy/helm/spring-service-starter`: shared Kubernetes deployment chart
 - `docs/adr`: architecture decision records
+- `docs/adoption`: pilot execution guidance
+- `docs/releases`: release readiness checklists
 - `scripts/init-service.sh`: starter bootstrap script
 
 ## Start A New Service
@@ -115,6 +117,8 @@ Default deployment assumptions:
 - `CHANGELOG.md`: release history
 - `RELEASING.md`: release process and stabilization rules
 - `CONTRIBUTING.md`: contribution and review rules
+- `docs/adoption/pilot-playbook.md`: pilot execution and evidence rules
+- `docs/releases/release-readiness-checklist.md`: `v1.0.0` readiness gates
 - `docs/adr`: architectural decisions
 
 ## Root Repository Behavior

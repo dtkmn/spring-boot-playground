@@ -21,15 +21,16 @@ This document defines how the starter repository is stabilized and released.
 
 1. Confirm the planned release scope is complete.
 2. Ensure `dev` is green and documentation is current.
-3. Update `/Users/0xdant/dev/spring-boot-playground/CHANGELOG.md`:
+3. Check `/Users/0xdant/dev/spring-boot-playground/docs/releases/release-readiness-checklist.md`.
+4. Update `/Users/0xdant/dev/spring-boot-playground/CHANGELOG.md`:
    - move finished work out of `Unreleased`
    - add a dated release heading
    - keep entries concise and user-visible
-4. Open and merge a reviewed pull request from `dev` to `main`.
-5. Verify `main` is green after merge.
-6. Create an annotated tag on the `main` commit using `v<major>.<minor>.<patch>`.
-7. Push the tag and create GitHub release notes from the changelog summary.
-8. Start a fresh `Unreleased` section for follow-up work.
+5. Open and merge a reviewed pull request from `dev` to `main`.
+6. Verify `main` is green after merge.
+7. Create an annotated tag on the `main` commit using `v<major>.<minor>.<patch>`.
+8. Push the tag and create GitHub release notes from the changelog summary.
+9. Start a fresh `Unreleased` section for follow-up work.
 
 ## Publish Policy
 

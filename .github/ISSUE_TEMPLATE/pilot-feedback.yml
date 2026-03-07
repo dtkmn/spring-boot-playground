@@ -1,0 +1,67 @@
+name: Pilot Feedback
+description: Capture findings from an internal service pilot using the starter
+title: "[Pilot] <team or service name>"
+body:
+  - type: input
+    id: service
+    attributes:
+      label: Service
+      description: Name of the pilot service or repository.
+    validations:
+      required: true
+  - type: dropdown
+    id: variant
+    attributes:
+      label: Variant
+      options:
+        - mvc-jpa
+        - webflux-r2dbc
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: Engineering owner
+    validations:
+      required: true
+  - type: input
+    id: repo
+    attributes:
+      label: Service repository
+      description: Link to the generated service repository or branch.
+    validations:
+      required: true
+  - type: textarea
+    id: outcomes
+    attributes:
+      label: Outcome summary
+      description: Summarize whether the pilot passed and what mattered most.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Include time to first green, time to first deployment, and validation performed.
+    validations:
+      required: true
+  - type: textarea
+    id: blockers
+    attributes:
+      label: Blockers and gaps
+      description: List starter issues, unexpected complexity, or missing assets.
+  - type: textarea
+    id: followups
+    attributes:
+      label: Follow-up issues
+      description: Link issues created from the pilot.
+  - type: dropdown
+    id: recommendation
+    attributes:
+      label: Recommendation
+      options:
+        - keep as-is
+        - keep with follow-up fixes
+        - do not recommend yet
+    validations:
+      required: true

@@ -40,6 +40,9 @@ tasks.register('validateRepositoryLayout') {
             'examples/binance-websocket',
             'deploy/helm/spring-service-starter',
             'deploy/helm/spring-service-starter/values.schema.json',
+            '.github/ISSUE_TEMPLATE/pilot-feedback.yml',
+            'docs/adoption/pilot-playbook.md',
+            'docs/releases/release-readiness-checklist.md',
             'RELEASING.md',
             'scripts/init-service.sh'
         ].each { path ->
