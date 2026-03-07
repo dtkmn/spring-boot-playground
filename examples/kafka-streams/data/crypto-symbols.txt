@@ -1,0 +1,3 @@
+dogecoin|DOGE
+bitcoin|BTC
+ethereum|ETH
