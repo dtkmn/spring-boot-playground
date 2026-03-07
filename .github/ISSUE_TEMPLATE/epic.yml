@@ -1,0 +1,29 @@
+name: Epic
+description: Strategic body of work for the Spring service starter
+labels: ["kind:epic"]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Short statement of the business or platform goal.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Expected outcome
+      description: What should be true when this epic is complete?
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Planned tasks
+      description: List the task issues that belong to this epic.
+      placeholder: |
+        - [ ] #123 Task name
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks or dependencies
