@@ -8,11 +8,25 @@ tasks.register('validateRepositoryLayout') {
     doLast {
         [
             'variants/mvc-jpa',
+            'variants/mvc-jpa/template/.gitignore',
+            'variants/mvc-jpa/template/README.md',
+            'variants/mvc-jpa/template/.github/workflows/ci.yml',
+            'variants/mvc-jpa/template/deploy/helm/values-dev.yaml',
+            'variants/mvc-jpa/template/deploy/helm/values-staging.yaml',
+            'variants/mvc-jpa/template/deploy/helm/values-prod.yaml',
             'variants/webflux-r2dbc',
+            'variants/webflux-r2dbc/template/.gitignore',
+            'variants/webflux-r2dbc/template/README.md',
+            'variants/webflux-r2dbc/template/.github/workflows/ci.yml',
+            'variants/webflux-r2dbc/template/deploy/helm/values-dev.yaml',
+            'variants/webflux-r2dbc/template/deploy/helm/values-staging.yaml',
+            'variants/webflux-r2dbc/template/deploy/helm/values-prod.yaml',
             'examples/kafka-basic',
             'examples/kafka-streams',
             'examples/binance-websocket',
-            'deploy/helm/spring-service-starter'
+            'deploy/helm/spring-service-starter',
+            'deploy/helm/spring-service-starter/values.schema.json',
+            'scripts/init-service.sh'
         ].each { path ->
             if (!file(path).exists()) {
                 throw new GradleException("Missing required repository path: ${path}")
