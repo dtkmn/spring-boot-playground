@@ -14,22 +14,27 @@ set -a
 source .env
 set +a
 
-APP_HOST_PORT=${APP_HOST_PORT:-8080}
-MANAGEMENT_HOST_PORT=${MANAGEMENT_HOST_PORT:-8081}
+APP_HOST_PORT=${APP_HOST_PORT:-__APP_PORT__}
+MANAGEMENT_HOST_PORT=${MANAGEMENT_HOST_PORT:-__MANAGEMENT_PORT__}
 health_file=$(mktemp)
 customers_file=$(mktemp)
+boot_log=$(mktemp)
+boot_pid=""
 
 cleanup() {
+  if [[ -n "$boot_pid" ]] && kill -0 "$boot_pid" 2>/dev/null; then
+    kill "$boot_pid" >/dev/null 2>&1 || true
+    wait "$boot_pid" >/dev/null 2>&1 || true
+  fi
   docker compose -f compose.yaml --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
-  docker compose -f docker-compose.yml --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
-  rm -f "$health_file" "$customers_file"
+  rm -f "$health_file" "$customers_file" "$boot_log"
 }
 trap cleanup EXIT
 
 docker compose -f compose.yaml --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
-docker compose -f docker-compose.yml --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
 
-docker compose -f docker-compose.yml --env-file .env up -d --build
+SERVER_PORT="$APP_HOST_PORT" MANAGEMENT_SERVER_PORT="$MANAGEMENT_HOST_PORT" ./gradlew bootRun --no-daemon >"$boot_log" 2>&1 &
+boot_pid=$!
 
 for _ in {1..30}; do
   if curl -fsS "http://localhost:${MANAGEMENT_HOST_PORT}/actuator/health" >"$health_file"; then
@@ -37,6 +42,12 @@ for _ in {1..30}; do
       break
     fi
   fi
+
+  if ! kill -0 "$boot_pid" 2>/dev/null; then
+    cat "$boot_log"
+    exit 1
+  fi
+
   sleep 2
 done
 
