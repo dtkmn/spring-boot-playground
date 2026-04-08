@@ -1,6 +1,5 @@
 package __PACKAGE_NAME__.web;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,10 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerWebExchange;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -29,8 +29,8 @@ public class ApiExceptionHandler {
         );
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ProblemDetail handleValidationException(MethodArgumentNotValidException exception) {
+    @ExceptionHandler(WebExchangeBindException.class)
+    public ProblemDetail handleValidationException(WebExchangeBindException exception) {
         Map<String, String> errors = new LinkedHashMap<>();
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
@@ -42,8 +42,8 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ProblemDetail handleUnexpectedException(Exception exception, HttpServletRequest request) {
-        log.error("Unhandled exception for path={}", request.getRequestURI(), exception);
+    public ProblemDetail handleUnexpectedException(Exception exception, ServerWebExchange exchange) {
+        log.error("Unhandled exception for path={}", exchange.getRequest().getURI().getPath(), exception);
         return buildProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
     }
 

@@ -61,6 +61,7 @@ jobs:
             echo "MANAGEMENT_HOST_PORT=${{ matrix.management_port }}"
             echo "POSTGRES_EXPORT_PORT=${{ matrix.postgres_port }}"
           } >> "generated/${{ matrix.artifact }}/.env"
+          docker compose -f "generated/${{ matrix.artifact }}/compose.yaml" --env-file "generated/${{ matrix.artifact }}/.env" config
           docker compose -f "generated/${{ matrix.artifact }}/docker-compose.yml" --env-file "generated/${{ matrix.artifact }}/.env" config
 
       - name: Check generated starter assets
@@ -68,6 +69,11 @@ jobs:
           test -f "generated/${{ matrix.artifact }}/README.md"
           test -f "generated/${{ matrix.artifact }}/.dockerignore"
           test -f "generated/${{ matrix.artifact }}/.gitignore"
+          test -f "generated/${{ matrix.artifact }}/gradlew"
+          test -f "generated/${{ matrix.artifact }}/gradlew.bat"
+          test -f "generated/${{ matrix.artifact }}/gradle/wrapper/gradle-wrapper.jar"
+          test -f "generated/${{ matrix.artifact }}/gradle/wrapper/gradle-wrapper.properties"
+          test -f "generated/${{ matrix.artifact }}/compose.yaml"
           test -f "generated/${{ matrix.artifact }}/.github/workflows/ci.yml"
           test -f "generated/${{ matrix.artifact }}/.github/workflows/publish.yml"
           test -f "generated/${{ matrix.artifact }}/.github/dependabot.yaml"
@@ -76,7 +82,13 @@ jobs:
           test -f "generated/${{ matrix.artifact }}/RELEASING.md"
           test -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml"
           test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
+          test -f "generated/${{ matrix.artifact }}/scripts/dev-smoke-test.sh"
           test -f "generated/${{ matrix.artifact }}/scripts/smoke-test.sh"
+
+      - name: Smoke test generated bootRun development path
+        run: |
+          cd "generated/${{ matrix.artifact }}"
+          ./scripts/dev-smoke-test.sh
 
       - name: Smoke test generated starter
         run: |

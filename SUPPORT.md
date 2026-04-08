@@ -18,7 +18,8 @@ This starter is optimized for internal engineering teams.
 ## Compatibility Baseline
 
 - Java 21
-- Spring Boot 3.x current stable line
+- Spring Boot 3.5.x maintained baseline line
+- Spring Boot 4.x migration planned as the next modernization tranche
 - PostgreSQL as the default persistence contract
 - Kubernetes plus Helm as the supported cloud deployment path
 

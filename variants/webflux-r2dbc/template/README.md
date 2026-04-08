@@ -9,7 +9,8 @@ Spring WebFlux + R2DBC starter service generated from the Spring Service Starter
 - Spring Data R2DBC
 - PostgreSQL
 - Flyway
-- Actuator + Prometheus
+- RFC 9457 problem details
+- Actuator + Prometheus + OTLP-ready tracing
 - Docker + Docker Compose
 - Helm for Kubernetes deployment
 
@@ -19,20 +20,25 @@ Spring WebFlux + R2DBC starter service generated from the Spring Service Starter
 cp .env.example .env
 ./gradlew test
 ./gradlew bootRun
+./scripts/dev-smoke-test.sh
 ./scripts/smoke-test.sh
 ```
+
+`./gradlew bootRun` uses `compose.yaml` plus Spring Boot development services to start PostgreSQL automatically when Docker is available.
 
 ## Local container workflow
 
 ```bash
 cp .env.example .env
-docker compose --env-file .env up --build
+docker compose -f docker-compose.yml --env-file .env up --build
 ```
 
 Default ports:
-- app: `__APP_PORT__`
-- management: `__MANAGEMENT_PORT__`
+- app host: `__APP_PORT__`
+- management host: `__MANAGEMENT_PORT__`
 - PostgreSQL export: `5432`
+
+Override `APP_HOST_PORT`, `MANAGEMENT_HOST_PORT`, or `POSTGRES_EXPORT_PORT` in `.env` if those ports are already in use locally.
 
 ## HTTP API
 - `GET /api/v1/customers`
@@ -40,6 +46,22 @@ Default ports:
 - `POST /api/v1/customers`
 
 The starter seeds one customer record through Flyway so health and API checks have immediate data.
+
+## Error contract
+
+Application errors use RFC `9457` problem details with:
+- `type`
+- `title`
+- `status`
+- `detail`
+- `instance`
+- `errors` for validation failures only
+
+## Observability
+
+- Prometheus metrics remain exposed through Actuator
+- OTLP tracing can be enabled by setting `MANAGEMENT_OTLP_TRACING_ENDPOINT`
+- Structured JSON console logs are opt-in through the `structured-logging` profile
 
 ## Kubernetes deployment
 
@@ -63,6 +85,7 @@ helm upgrade --install __ARTIFACT_ID__ deploy/helm/spring-service-starter \
 ```
 
 Service-specific deployment values live under `deploy/helm/`.
+Optional hardening values include service-account controls, pod annotations, pod/container security contexts, node scheduling hints, and a pod disruption budget.
 
 ## Release workflow
 

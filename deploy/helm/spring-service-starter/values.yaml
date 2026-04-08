@@ -20,7 +20,25 @@ env: {}
 secrets:
   existingSecret: ""
 
+serviceAccount:
+  create: false
+  name: ""
+  annotations: {}
+
+podAnnotations: {}
+podSecurityContext: {}
+containerSecurityContext: {}
+
 resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  maxUnavailable: null
 
 autoscaling:
   enabled: false

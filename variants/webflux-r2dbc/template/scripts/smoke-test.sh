@@ -20,12 +20,16 @@ health_file=$(mktemp)
 customers_file=$(mktemp)
 
 cleanup() {
-  docker compose --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
+  docker compose -f compose.yaml --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
+  docker compose -f docker-compose.yml --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
   rm -f "$health_file" "$customers_file"
 }
 trap cleanup EXIT
 
-docker compose --env-file .env up -d --build
+docker compose -f compose.yaml --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
+docker compose -f docker-compose.yml --env-file .env down -v --remove-orphans >/dev/null 2>&1 || true
+
+docker compose -f docker-compose.yml --env-file .env up -d --build
 
 for _ in {1..30}; do
   if curl -fsS "http://localhost:${MANAGEMENT_HOST_PORT}/actuator/health" >"$health_file"; then

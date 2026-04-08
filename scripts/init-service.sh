@@ -104,6 +104,10 @@ fi
 
 mkdir -p "$output_dir"
 cp -R "$template_dir/." "$output_dir"
+cp "$repo_root/gradlew" "$output_dir/"
+cp "$repo_root/gradlew.bat" "$output_dir/"
+mkdir -p "$output_dir/gradle"
+cp -R "$repo_root/gradle/wrapper" "$output_dir/gradle/"
 
 if [[ -d "$shared_chart_dir" ]]; then
   mkdir -p "$output_dir/deploy/helm"

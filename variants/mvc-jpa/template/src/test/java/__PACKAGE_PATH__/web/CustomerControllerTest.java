@@ -56,11 +56,13 @@ class CustomerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"firstName\":\"\",\"lastName\":\"Doe\"}"))
             .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.type").value("about:blank"))
+            .andExpect(jsonPath("$.title").value("Bad Request"))
             .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.message").value("Request validation failed"))
-            .andExpect(jsonPath("$.path").value("/api/v1/customers"))
-            .andExpect(jsonPath("$.validationErrors.firstName").value("must not be blank"));
+            .andExpect(jsonPath("$.detail").value("Request validation failed"))
+            .andExpect(jsonPath("$.instance").value("/api/v1/customers"))
+            .andExpect(jsonPath("$.errors.firstName").value("must not be blank"));
     }
 
     @Test
@@ -70,10 +72,27 @@ class CustomerControllerTest {
 
         mockMvc.perform(get("/api/v1/customers/99"))
             .andExpect(status().isNotFound())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.type").value("about:blank"))
+            .andExpect(jsonPath("$.title").value("Not Found"))
             .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.error").value("Not Found"))
-            .andExpect(jsonPath("$.message").value("Customer not found"))
-            .andExpect(jsonPath("$.path").value("/api/v1/customers/99"))
-            .andExpect(jsonPath("$.validationErrors").isEmpty());
+            .andExpect(jsonPath("$.detail").value("Customer not found"))
+            .andExpect(jsonPath("$.instance").value("/api/v1/customers/99"))
+            .andExpect(jsonPath("$.errors").doesNotExist());
+    }
+
+    @Test
+    void shouldReturnUnexpectedProblemDetails() throws Exception {
+        when(customerService.findAll()).thenThrow(new RuntimeException("boom"));
+
+        mockMvc.perform(get("/api/v1/customers"))
+            .andExpect(status().isInternalServerError())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+            .andExpect(jsonPath("$.type").value("about:blank"))
+            .andExpect(jsonPath("$.title").value("Internal Server Error"))
+            .andExpect(jsonPath("$.status").value(500))
+            .andExpect(jsonPath("$.detail").value("Unexpected error"))
+            .andExpect(jsonPath("$.instance").value("/api/v1/customers"))
+            .andExpect(jsonPath("$.errors").doesNotExist());
     }
 }
