@@ -76,8 +76,61 @@
       },
       "required": ["existingSecret"]
     },
+    "serviceAccount": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "object"
+        }
+      },
+      "required": ["create", "name", "annotations"]
+    },
+    "podAnnotations": {
+      "type": "object"
+    },
+    "podSecurityContext": {
+      "type": "object"
+    },
+    "containerSecurityContext": {
+      "type": "object"
+    },
     "resources": {
       "type": "object"
+    },
+    "nodeSelector": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "tolerations": {
+      "type": "array"
+    },
+    "affinity": {
+      "type": "object"
+    },
+    "podDisruptionBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "minAvailable": {
+          "type": ["integer", "string", "null"]
+        },
+        "maxUnavailable": {
+          "type": ["integer", "string", "null"]
+        }
+      },
+      "required": ["enabled", "minAvailable", "maxUnavailable"]
     },
     "autoscaling": {
       "type": "object",
@@ -185,7 +238,15 @@
     "management",
     "env",
     "secrets",
+    "serviceAccount",
+    "podAnnotations",
+    "podSecurityContext",
+    "containerSecurityContext",
     "resources",
+    "nodeSelector",
+    "tolerations",
+    "affinity",
+    "podDisruptionBudget",
     "autoscaling",
     "ingress",
     "postgres"

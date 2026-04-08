@@ -8,10 +8,18 @@ Expected contract:
 - `service.port`
 - `env`
 - `secrets.existingSecret`
+- `serviceAccount`
+- `podAnnotations`
+- `podSecurityContext`
+- `containerSecurityContext`
 - `resources`
 - `autoscaling.enabled`
 - `ingress.enabled`
 - `ingress.hosts`
+- `nodeSelector`
+- `tolerations`
+- `affinity`
+- `podDisruptionBudget`
 - `postgres.enabled`
 - `postgres.host`
 - `postgres.port`
@@ -22,6 +30,7 @@ Defaults:
 - external PostgreSQL
 - no bundled Kafka
 - Actuator-backed liveness, readiness, and startup probes
+- optional service-account, scheduling, and disruption-budget hardening
 
 ## Secret Contract
 

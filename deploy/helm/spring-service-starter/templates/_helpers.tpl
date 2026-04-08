@@ -16,3 +16,11 @@ helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{- define "spring-service-starter.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+{{- default (include "spring-service-starter.fullname" .) .Values.serviceAccount.name -}}
+{{- else -}}
+{{- .Values.serviceAccount.name -}}
+{{- end -}}
+{{- end -}}
