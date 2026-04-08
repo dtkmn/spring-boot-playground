@@ -7,10 +7,10 @@ The default path is `mvc-jpa`. `webflux-r2dbc` remains the supported advanced va
 ## Starter Contract
 
 Every starter variant should provide:
-- Java 21 and Spring Boot 3.x
+- Java 21 and the maintained Spring Boot 3.5.x line
 - PostgreSQL plus Flyway
-- Actuator and Prometheus metrics
-- Docker and Docker Compose for local development
+- Actuator, Prometheus metrics, and OTLP-ready tracing hooks
+- Docker Compose-backed local development plus standalone container smoke coverage
 - test baselines suitable for CI
 - Kubernetes deployment support through Helm
 
@@ -51,11 +51,15 @@ Output is created under `generated/<artifact-id>` by default.
 Generated services now include:
 - application code for the selected variant
 - `.dockerignore` and `.gitignore`
+- `gradlew`, `gradlew.bat`, and `gradle/wrapper`
 - a starter CI workflow under `.github/workflows/ci.yml`
 - a tag-gated publish workflow under `.github/workflows/publish.yml`
 - Dependabot and baseline support/changelog docs
 - `RELEASING.md` with branch and tag rules
-- Docker Compose and local env template
+- `compose.yaml` for `bootRun` development services
+- `docker-compose.yml` for full container smoke validation
+- `scripts/dev-smoke-test.sh` and `scripts/smoke-test.sh`
+- local env template plus opt-in structured logging and OTLP tracing hooks
 - a vendored Helm chart under `deploy/helm/spring-service-starter`
 - service-specific Helm values for dev, staging, and prod
 
@@ -95,10 +99,18 @@ Supported chart contract:
 - `service.port`
 - `env`
 - `secrets.existingSecret`
+- `serviceAccount`
+- `podAnnotations`
+- `podSecurityContext`
+- `containerSecurityContext`
 - `resources`
 - `autoscaling.enabled`
 - `ingress.enabled`
 - `ingress.hosts`
+- `nodeSelector`
+- `tolerations`
+- `affinity`
+- `podDisruptionBudget`
 - `postgres.enabled`
 - `postgres.host`
 - `postgres.port`
@@ -110,6 +122,7 @@ Default deployment assumptions:
 - no bundled Kafka
 - Actuator-backed health probes
 - HPA support is optional and disabled by default
+- Boot 4 migration is intentionally deferred to the next modernization tranche
 
 ## Governance
 
