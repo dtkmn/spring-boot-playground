@@ -35,7 +35,16 @@ jobs:
       - name: Validate Docker Compose
         run: |
           cp .env.example .env
-          docker compose --env-file .env config
+          {
+            echo "APP_HOST_PORT=18080"
+            echo "MANAGEMENT_HOST_PORT=18081"
+            echo "POSTGRES_EXPORT_PORT=15432"
+          } >> .env
+          docker compose -f compose.yaml --env-file .env config
+          docker compose -f docker-compose.yml --env-file .env config
+
+      - name: Smoke test bootRun development path
+        run: ./scripts/dev-smoke-test.sh
 
       - name: Smoke test starter
         run: ./scripts/smoke-test.sh
