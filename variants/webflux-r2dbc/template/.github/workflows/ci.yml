@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: ["main", "dev"]
@@ -21,8 +24,18 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Run tests
-        run: ./gradlew test --no-daemon
+      - name: Run quality gates
+        run: ./gradlew check --no-daemon
+
+      - name: Upload quality reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: quality-reports
+          path: |
+            build/reports/tests/
+            build/reports/jacoco/
+            build/reports/cyclonedx/
 
       - name: Validate Docker Compose
         run: |
