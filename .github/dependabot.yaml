@@ -4,3 +4,47 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "/variants/mvc-jpa/template"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gradle"
+    directory: "/variants/webflux-r2dbc/template"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gradle"
+    directory: "/examples/kafka-basic"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gradle"
+    directory: "/examples/kafka-streams"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gradle"
+    directory: "/examples/binance-websocket"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/variants/mvc-jpa/template"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/variants/webflux-r2dbc/template"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/examples/kafka-basic"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/examples/kafka-streams"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/examples/binance-websocket"
+    schedule:
+      interval: "weekly"

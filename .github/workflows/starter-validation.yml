@@ -50,8 +50,8 @@ jobs:
             --artifact-id "${{ matrix.artifact }}" \
             --package-name "${{ matrix.package_name }}"
 
-      - name: Test generated starter
-        run: ./gradlew -p "generated/${{ matrix.artifact }}" test --no-daemon
+      - name: Check generated starter
+        run: ./gradlew -p "generated/${{ matrix.artifact }}" check --no-daemon
 
       - name: Validate generated Docker Compose
         run: |
@@ -84,6 +84,18 @@ jobs:
           test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
           test -f "generated/${{ matrix.artifact }}/scripts/dev-smoke-test.sh"
           test -f "generated/${{ matrix.artifact }}/scripts/smoke-test.sh"
+          test -d "generated/${{ matrix.artifact }}/build/reports/cyclonedx"
+          test -f "generated/${{ matrix.artifact }}/build/reports/jacoco/test/jacocoTestReport.xml"
+
+      - name: Upload generated quality reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: generated-${{ matrix.variant }}-quality-reports
+          path: |
+            generated/${{ matrix.artifact }}/build/reports/tests/
+            generated/${{ matrix.artifact }}/build/reports/jacoco/
+            generated/${{ matrix.artifact }}/build/reports/cyclonedx/
 
       - name: Smoke test generated bootRun development path
         run: |
