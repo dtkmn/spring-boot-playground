@@ -29,8 +29,8 @@ jobs:
           git fetch --no-tags origin main
           git merge-base --is-ancestor "${GITHUB_SHA}" "origin/main"
 
-      - name: Run tests
-        run: ./gradlew test --no-daemon
+      - name: Run quality gates
+        run: ./gradlew check --no-daemon
 
       - name: Validate Docker Compose
         run: |
