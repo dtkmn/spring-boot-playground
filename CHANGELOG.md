@@ -13,9 +13,14 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - RFC 9457 problem-details error contract for both starter variants
 - OTLP-ready tracing dependencies, log correlation support, and opt-in structured logging profile
 - Optional Helm values for service accounts, pod security context, scheduling, and disruption budgets
+- Promotion brief, version policy, and supply-chain baseline docs for controlled internal adoption
+- CycloneDX SBOM generation and JaCoCo coverage reports for generated starters
+- Repository validation for starter promotion contract requirements
 
 ### Changed
 - Reposition repository from playground to Spring service starter
 - Add starter variants, examples scaffolding, bootstrap script, and Helm chart
-- Upgrade starter and example baseline to Spring Boot 3.5.13 and align Docker builder images on Gradle 9.4.0
+- Upgrade starter and example baseline to Spring Boot 3.5.13 and align Docker builder images on Gradle 9.4.1
 - Move starter integration tests to Spring Boot Testcontainers service connections
+- Run generated starter CI and publish workflows through `./gradlew check`
+- Harden starter and example Docker runtime images to run as a non-root user

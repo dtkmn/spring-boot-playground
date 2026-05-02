@@ -2,55 +2,84 @@
 
 ## Purpose
 
-Use this checklist before closing `/Users/0xdant/dev/spring-boot-playground/issues/62` and creating `v1.0.0`.
+Use this checklist before creating a release tag from `main`.
+
+If the release is tracked in GitHub, use a milestone, project item, or release tracking issue. Do not hard-code local issue numbers into this document. A checklist that only works in one maintainer's repository view is not release governance; it is private bookkeeping.
+
+## Blunt Usability Check
+
+The previous checklist was too close to theater. It named good intentions, but it depended on phantom issue references and did not show a maintainer how to prove the gates passed.
+
+This checklist is usable only when every checked item has evidence: a CI run, command output, release review link, pilot feedback link, or a documented exception with an owner and follow-up. If those artifacts do not exist, the release is not ready.
 
 ## Entry Criteria
 
-- `/Users/0xdant/dev/spring-boot-playground/issues/60` is closed with pilot evidence.
-- `/Users/0xdant/dev/spring-boot-playground/issues/61` is closed with pilot evidence.
-- `dev` is green.
+- The planned release scope is written in `CHANGELOG.md` under `Unreleased`.
+- Pilot evidence exists in linked `Pilot Feedback` issues, a release milestone, or another team-visible tracker.
+- `dev` is green in both repository validation and starter validation workflows.
 - `main` is reserved for stabilized release promotions only.
+- Any release-blocking pilot findings have either been fixed or explicitly deferred with an owner.
 
 ## Readiness Gates
 
 ### Product
 
-- `mvc-jpa` is the documented default path.
+- `mvc-jpa` is still the documented default path in `README.md`, `variants/README.md`, and `docs/adoption/promotion-brief.md`.
 - `webflux-r2dbc` is still explicitly marked as the advanced variant.
-- Optional integrations remain isolated under `examples/`.
+- Optional integrations remain isolated under `examples/` and are not presented as starter defaults.
+- Pilot feedback does not show teams rewriting the generated structure immediately after generation.
 
 ### Quality
 
-- Repository validation passes on `dev`.
-- Starter validation passes on `dev`.
-- Generated starters still pass build, Docker Compose validation, Helm render, and smoke test.
+- Repository validation passes on `dev`:
+
+```bash
+./gradlew build --no-daemon
+```
+
+- Starter contract validation passes locally or in CI:
+
+```bash
+./gradlew check --no-daemon
+```
+
+- The `Starter Validation` workflow passes for both `mvc-jpa` and `webflux-r2dbc`.
+- Generated starters pass build, Docker Compose config validation, development smoke test, packaged-container smoke test, Helm lint, and Helm template.
+- Generated starters produce test, JaCoCo, and CycloneDX report output under `generated/<artifact>/build/reports/`.
+- Generated runtime Docker images still run as a non-root user.
 
 ### Governance
 
-- `/Users/0xdant/dev/spring-boot-playground/CHANGELOG.md` reflects the release scope.
-- `/Users/0xdant/dev/spring-boot-playground/SUPPORT.md` and `/Users/0xdant/dev/spring-boot-playground/RELEASING.md` are current.
+- `CHANGELOG.md` reflects the release scope.
+- `SUPPORT.md` and `RELEASING.md` are current.
+- `docs/adoption/promotion-brief.md` reflects current adoption status.
+- `docs/releases/version-policy.md` reflects the current Java, Spring Boot, and Gradle baselines.
+- `docs/security/supply-chain-baseline.md` reflects current generated-service supply-chain gates.
 - The publish contract remains tag-gated for generated services.
+- No release or promotion doc contains maintainer-local absolute paths.
 
 ## Release Steps
 
 1. Promote the release candidate from `dev` to `main`.
 2. Verify validation workflows on `main`.
-3. Update `CHANGELOG.md` with a dated `v1.0.0` section.
-4. Create and push the annotated tag:
+3. Update `CHANGELOG.md` with a dated release section.
+4. Create and push the annotated tag from the `main` commit:
 
 ```bash
+: "${VERSION:?Set VERSION to the release tag, for example v1.0.0}"
 git checkout main
 git pull --ff-only
-git tag -a v1.0.0 -m "Spring Service Starter v1.0.0"
-git push origin v1.0.0
+git tag -a "$VERSION" -m "Spring Service Starter $VERSION"
+git push origin "$VERSION"
 ```
 
 5. Create the GitHub release using the changelog summary.
+6. Link the release to the milestone, project item, or release tracking issue that contains the evidence above.
 
 ## Post-Release Backlog
 
-- Open or update a `v1.1` backlog issue.
-- Link pilot follow-up issues that did not block `v1.0.0`.
+- Open or update the next-release backlog tracker.
+- Link pilot follow-up issues that did not block the current release.
 - Separate:
   - must-fix before wider adoption
   - safe for next minor release
@@ -58,6 +87,6 @@ git push origin v1.0.0
 
 ## Exit Criteria
 
-- The `v1.0.0` tag exists on GitHub.
+- The release tag exists on GitHub.
 - The GitHub release is published.
-- The post-release backlog issue is linked from `/Users/0xdant/dev/spring-boot-playground/issues/62`.
+- The post-release backlog tracker is linked from the release notes or release tracking issue.

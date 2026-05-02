@@ -15,22 +15,24 @@ This document defines how the starter repository is stabilized and released.
 
 - Use semantic version tags in the form `v<major>.<minor>.<patch>`.
 - Create release tags from `main` only.
-- Update `/Users/0xdant/dev/spring-boot-playground/CHANGELOG.md` before tagging.
+- Update `CHANGELOG.md` before tagging.
 
 ## Release Checklist
 
 1. Confirm the planned release scope is complete.
 2. Ensure `dev` is green and documentation is current.
-3. Check `/Users/0xdant/dev/spring-boot-playground/docs/releases/release-readiness-checklist.md`.
-4. Update `/Users/0xdant/dev/spring-boot-playground/CHANGELOG.md`:
+3. Complete `docs/releases/release-readiness-checklist.md`.
+4. Confirm `docs/releases/version-policy.md` still matches the dependency baseline.
+5. Confirm generated starter quality reports include test, coverage, and SBOM output.
+6. Update `CHANGELOG.md`:
    - move finished work out of `Unreleased`
    - add a dated release heading
    - keep entries concise and user-visible
-5. Open and merge a reviewed pull request from `dev` to `main`.
-6. Verify `main` is green after merge.
-7. Create an annotated tag on the `main` commit using `v<major>.<minor>.<patch>`.
-8. Push the tag and create GitHub release notes from the changelog summary.
-9. Start a fresh `Unreleased` section for follow-up work.
+7. Open and merge a reviewed pull request from `dev` to `main`.
+8. Verify `main` is green after merge.
+9. Create an annotated tag on the `main` commit using `v<major>.<minor>.<patch>`.
+10. Push the tag and create GitHub release notes from the changelog summary.
+11. Start a fresh `Unreleased` section for follow-up work.
 
 ## Publish Policy
 

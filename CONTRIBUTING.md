@@ -40,5 +40,5 @@ Reviews should prioritize:
 
 ## Release Changes
 
-- Update `/Users/0xdant/dev/spring-boot-playground/CHANGELOG.md` for user-visible starter changes.
-- Follow `/Users/0xdant/dev/spring-boot-playground/RELEASING.md` when promoting `dev` to `main` or cutting a release.
+- Update `CHANGELOG.md` for user-visible starter changes.
+- Follow `RELEASING.md` when promoting `dev` to `main` or cutting a release.

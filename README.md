@@ -2,6 +2,12 @@
 
 `spring-boot-playground` now acts as the repository for the Spring service starter program.
 
+## Promotion Status
+
+This repo is an internal starter candidate. It is ready for controlled pilot adoption, not broad platform-product rollout.
+
+Use `docs/adoption/promotion-brief.md` as the adoption pitch and `docs/releases/version-policy.md` as the dependency baseline. The current stable line remains Java 21 plus Spring Boot 3.5.x while the Boot 4 / Java 25 migration is handled as a separate modernization tranche.
+
 The default path is `mvc-jpa`. `webflux-r2dbc` remains the supported advanced variant for teams with a real reactive requirement. Optional integrations live under `examples/` and are intentionally outside the starter contract.
 
 ## Starter Contract
@@ -55,11 +61,14 @@ Generated services now include:
 - a starter CI workflow under `.github/workflows/ci.yml`
 - a tag-gated publish workflow under `.github/workflows/publish.yml`
 - Dependabot and baseline support/changelog docs
+- CycloneDX SBOM generation through `./gradlew check`
+- JaCoCo coverage reports from the default test lifecycle
 - `RELEASING.md` with branch and tag rules
 - `compose.yaml` for `bootRun` development services
 - `docker-compose.yml` for full container smoke validation
 - `scripts/dev-smoke-test.sh` and `scripts/smoke-test.sh`
 - local env template plus opt-in structured logging and OTLP tracing hooks
+- non-root runtime Docker image defaults
 - a vendored Helm chart under `deploy/helm/spring-service-starter`
 - service-specific Helm values for dev, staging, and prod
 
@@ -131,7 +140,10 @@ Default deployment assumptions:
 - `RELEASING.md`: release process and stabilization rules
 - `CONTRIBUTING.md`: contribution and review rules
 - `docs/adoption/pilot-playbook.md`: pilot execution and evidence rules
+- `docs/adoption/promotion-brief.md`: internal promotion stance and adoption gates
 - `docs/releases/release-readiness-checklist.md`: `v1.0.0` readiness gates
+- `docs/releases/version-policy.md`: Java, Spring Boot, Gradle, and migration policy
+- `docs/security/supply-chain-baseline.md`: SBOM, Dependabot, and scanner guardrails
 - `docs/adr`: architectural decisions
 
 ## Root Repository Behavior
