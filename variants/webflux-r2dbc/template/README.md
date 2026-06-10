@@ -12,6 +12,8 @@ Spring WebFlux + R2DBC starter service generated from the Spring Service Starter
 - RFC 9457 problem details
 - Actuator + Prometheus + OTLP-ready tracing
 - Docker + Docker Compose
+- CycloneDX SBOM output
+- JaCoCo coverage reports
 - Helm for Kubernetes deployment
 
 ## Local development
@@ -19,6 +21,7 @@ Spring WebFlux + R2DBC starter service generated from the Spring Service Starter
 ```bash
 cp .env.example .env
 ./gradlew test
+./gradlew check
 ./gradlew bootRun
 ./scripts/dev-smoke-test.sh
 ./scripts/smoke-test.sh
@@ -62,6 +65,12 @@ Application errors use RFC `9457` problem details with:
 - Prometheus metrics remain exposed through Actuator
 - OTLP tracing can be enabled by setting `MANAGEMENT_OTLP_TRACING_ENDPOINT`
 - Structured JSON console logs are opt-in through the `structured-logging` profile
+
+## Supply chain
+
+`./gradlew check` generates a CycloneDX SBOM under `build/reports/cyclonedx/` and JaCoCo coverage output under `build/reports/jacoco/`. CI uploads these reports as build artifacts.
+
+The Docker runtime image runs the application as a non-root user by default. Dependabot tracks Gradle, GitHub Actions, and Docker updates.
 
 ## Kubernetes deployment
 

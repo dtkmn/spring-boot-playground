@@ -1,5 +1,8 @@
 name: Repository Validation
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: ["main", "dev"]
@@ -10,8 +13,6 @@ on:
 jobs:
   repository-checks:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@v5

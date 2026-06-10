@@ -45,8 +45,15 @@ tasks.register('validateRepositoryLayout') {
             'deploy/helm/spring-service-starter',
             'deploy/helm/spring-service-starter/values.schema.json',
             '.github/ISSUE_TEMPLATE/pilot-feedback.yml',
+            'docs/adr/ADR-001-default-starter-and-variants.md',
+            'docs/adr/ADR-002-kubernetes-and-helm.md',
+            'docs/adr/ADR-003-2026-modernization-tranches.md',
+            'docs/adr/ADR-004-promotion-and-supply-chain-baseline.md',
             'docs/adoption/pilot-playbook.md',
+            'docs/adoption/promotion-brief.md',
             'docs/releases/release-readiness-checklist.md',
+            'docs/releases/version-policy.md',
+            'docs/security/supply-chain-baseline.md',
             'RELEASING.md',
             'scripts/init-service.sh'
         ].each { path ->
@@ -57,6 +64,42 @@ tasks.register('validateRepositoryLayout') {
     }
 }
 
+tasks.register('validateStarterPromotionContract') {
+    doLast {
+        [
+            'variants/mvc-jpa/template',
+            'variants/webflux-r2dbc/template'
+        ].each { templatePath ->
+            def template = file(templatePath)
+            def buildFile = file("${templatePath}/build.gradle").text
+            def dockerfile = file("${templatePath}/Dockerfile").text
+            def ciWorkflow = file("${templatePath}/.github/workflows/ci.yml").text
+            def publishWorkflow = file("${templatePath}/.github/workflows/publish.yml").text
+            def dependabot = file("${templatePath}/.github/dependabot.yaml").text
+
+            if (!buildFile.contains("id 'org.cyclonedx.bom'")) {
+                throw new GradleException("Missing CycloneDX SBOM plugin in ${template}")
+            }
+            if (!buildFile.contains("id 'jacoco'")) {
+                throw new GradleException("Missing JaCoCo coverage plugin in ${template}")
+            }
+            if (!dockerfile.contains('USER 10001:10001')) {
+                throw new GradleException("Dockerfile must run as a non-root user in ${template}")
+            }
+            if (!ciWorkflow.contains('./gradlew check --no-daemon')) {
+                throw new GradleException("CI must run Gradle check in ${template}")
+            }
+            if (!publishWorkflow.contains('./gradlew check --no-daemon')) {
+                throw new GradleException("Publish workflow must run Gradle check in ${template}")
+            }
+            if (!dependabot.contains('package-ecosystem: "docker"')) {
+                throw new GradleException("Dependabot must track Docker updates in ${template}")
+            }
+        }
+    }
+}
+
 tasks.named('check') {
     dependsOn 'validateRepositoryLayout'
+    dependsOn 'validateStarterPromotionContract'
 }

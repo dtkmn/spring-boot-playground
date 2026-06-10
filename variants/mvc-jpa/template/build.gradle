@@ -1,13 +1,16 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.13'
+    id 'jacoco'
+    id 'org.springframework.boot' version '3.5.14'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.cyclonedx.bom' version '3.2.4'
 }
 
 group = '__GROUP_ID__'
 version = '0.1.0-SNAPSHOT'
 
 ext {
+    set('postgresql.version', '42.7.11')
     set('testcontainersVersion', '1.21.3')
 }
 
@@ -48,6 +51,20 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    environment 'SERVER_PORT', '0'
+    environment 'MANAGEMENT_SERVER_PORT', '0'
+    finalizedBy tasks.named('jacocoTestReport')
+}
+
+tasks.named('jacocoTestReport') {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('cyclonedxBom')
 }
 
 tasks.named('bootJar') {

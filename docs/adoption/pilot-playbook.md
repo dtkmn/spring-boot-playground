@@ -2,9 +2,9 @@
 
 ## Purpose
 
-Use this playbook to validate the starter with a real internal service before closing:
-- `/Users/0xdant/dev/spring-boot-playground/issues/60`
-- `/Users/0xdant/dev/spring-boot-playground/issues/61`
+Use this playbook to validate the starter with a real internal service before wider promotion.
+
+Track each pilot with a `Pilot Feedback` issue, release milestone, or project item. Do not depend on fixed issue numbers; they are not portable across forks, mirrors, or regenerated repositories.
 
 ## Entry Criteria
 
@@ -17,11 +17,13 @@ Use this playbook to validate the starter with a real internal service before cl
 
 ## Pilot Steps
 
-1. Generate the service with `/Users/0xdant/dev/spring-boot-playground/scripts/init-service.sh`.
+1. Generate the service from the repository root with `./scripts/init-service.sh`.
 2. Commit the generated service to its own repository without structural rewrites.
 3. Reach a local green path:
-   - `./gradlew test --no-daemon`
-   - `docker compose --env-file .env up --build`
+   - `./gradlew check --no-daemon`
+   - `docker compose -f compose.yaml --env-file .env config`
+   - `docker compose -f docker-compose.yml --env-file .env config`
+   - `./scripts/dev-smoke-test.sh`
    - `./scripts/smoke-test.sh`
 4. Deploy the service to the target development cluster with Helm.
 5. Record every starter deviation, missing asset, and operational surprise.
@@ -42,6 +44,7 @@ Use this playbook to validate the starter with a real internal service before cl
 - Team and engineering owner
 - Time to first local green
 - Time to first cluster deployment
+- Confirmation that SBOM and coverage reports were produced
 - Issues filed from pilot findings
 - Recommendation:
   - keep as-is
