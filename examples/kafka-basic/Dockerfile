@@ -5,7 +5,7 @@ COPY build.gradle .
 COPY settings.gradle .
 RUN gradle --no-daemon bootJar -x test
 
-FROM eclipse-temurin:21-jre-ubi10-minimal
+FROM eclipse-temurin:25-jre-ubi10-minimal
 WORKDIR /app
 COPY --from=builder /usr/src/app/build/libs/app.jar ./app.jar
 EXPOSE 8080
