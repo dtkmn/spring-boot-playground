@@ -130,7 +130,29 @@
           "type": ["integer", "string", "null"]
         }
       },
-      "required": ["enabled", "minAvailable", "maxUnavailable"]
+      "required": ["enabled"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "enabled": {
+                "const": true
+              }
+            },
+            "required": ["enabled"]
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": ["minAvailable"]
+              },
+              {
+                "required": ["maxUnavailable"]
+              }
+            ]
+          }
+        }
+      ]
     },
     "autoscaling": {
       "type": "object",
