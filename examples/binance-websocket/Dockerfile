@@ -1,11 +1,11 @@
-FROM gradle:9.4.1-jdk21 AS builder
+FROM gradle:9.5.1-jdk21 AS builder
 WORKDIR /usr/src/app
 COPY src ./src
 COPY build.gradle .
 COPY settings.gradle .
 RUN gradle --no-daemon bootJar -x test
 
-FROM eclipse-temurin:21.0.11_10-jre-alpine-3.21
+FROM eclipse-temurin:21.0.11_10-jre-alpine-3.22
 WORKDIR /app
 COPY --from=builder /usr/src/app/build/libs/app.jar ./app.jar
 EXPOSE 8080
