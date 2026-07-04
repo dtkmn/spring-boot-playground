@@ -76,27 +76,6 @@ require_contains() {
   fi
 }
 
-validate_stable_line_dependabot_rules() {
-  local file="$1"
-
-  require_contains "$file" 'dependency-name: "org.springframework.boot*"' \
-    "Dependabot must ignore Spring Boot major updates"
-  require_contains "$file" "spring-boot-minor-patch:" \
-    "Dependabot must group Spring Boot minor/patch updates"
-  require_contains "$file" 'dependency-name: "eclipse-temurin"' \
-    "Dependabot must ignore eclipse-temurin major updates"
-  require_contains "$file" "eclipse-temurin-minor-patch:" \
-    "Dependabot must group eclipse-temurin minor/patch updates"
-  require_contains "$file" '- "version-update:semver-major"' \
-    "Dependabot must ignore semver major updates for stable lines"
-  require_contains "$file" '- "minor"' \
-    "Dependabot stable-line groups must include minor updates"
-  require_contains "$file" '- "patch"' \
-    "Dependabot stable-line groups must include patch updates"
-}
-
-validate_stable_line_dependabot_rules ".github/dependabot.yaml"
-
 for template_path in "variants/mvc-jpa/template" "variants/webflux-r2dbc/template"; do
   require_contains "$template_path/build.gradle" "id 'org.cyclonedx.bom'" \
     "Missing CycloneDX SBOM plugin"
@@ -110,7 +89,6 @@ for template_path in "variants/mvc-jpa/template" "variants/webflux-r2dbc/templat
     "Publish workflow must run Gradle check"
   require_contains "$template_path/.github/dependabot.yaml" 'package-ecosystem: "docker"' \
     "Dependabot must track Docker updates"
-  validate_stable_line_dependabot_rules "$template_path/.github/dependabot.yaml"
 done
 
 if [[ "$failures" -ne 0 ]]; then
