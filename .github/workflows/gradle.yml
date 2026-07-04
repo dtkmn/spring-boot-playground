@@ -34,7 +34,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Setup Gradle for dependency graph submission
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           dependency-graph: generate-and-submit
@@ -50,17 +50,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v5
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
-
-      - name: Validate repository root
-        run: ./gradlew build --no-daemon
+      - name: Validate repository layout and starter contracts
+        run: ./.github/scripts/validate-repository.sh
 
   example-builds:
     runs-on: ubuntu-latest

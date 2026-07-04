@@ -34,13 +34,14 @@ This checklist is usable only when every checked item has evidence: a CI run, co
 - Repository validation passes on `dev`:
 
 ```bash
-./gradlew build --no-daemon
+./.github/scripts/validate-repository.sh
 ```
 
-- Starter contract validation passes locally or in CI:
+- Starter builds pass locally or in CI:
 
 ```bash
-./gradlew check --no-daemon
+./gradlew -p variants/mvc-jpa/template check --no-daemon
+./gradlew -p variants/webflux-r2dbc/template check --no-daemon
 ```
 
 - The `Starter Validation` workflow passes for both `mvc-jpa` and `webflux-r2dbc`.
