@@ -11,6 +11,41 @@ on:
     branches: ["main", "dev"]
 
 jobs:
+  dependency-submission:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - examples/kafka-basic
+          - examples/kafka-streams
+          - examples/binance-websocket
+          - variants/mvc-jpa/template
+          - variants/webflux-r2dbc/template
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle dependency submission
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          dependency-graph: generate-and-submit
+          dependency-graph-continue-on-failure: false
+
+      - name: Resolve runtime dependencies
+        run: ./gradlew -p "${{ matrix.project }}" dependencies --configuration runtimeClasspath --no-daemon
+
+      - name: Resolve test dependencies
+        run: ./gradlew -p "${{ matrix.project }}" dependencies --configuration testRuntimeClasspath --no-daemon
+
   repository-checks:
     runs-on: ubuntu-latest
 
@@ -24,7 +59,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Validate repository root
         run: ./gradlew build --no-daemon
@@ -48,7 +83,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build example
         run: ./gradlew -p "examples/${{ matrix.example }}" build --no-daemon

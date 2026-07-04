@@ -11,7 +11,7 @@ version = '0.1.0-SNAPSHOT'
 
 ext {
     set('postgresql.version', '42.7.11')
-    set('testcontainersVersion', '1.21.3')
+    set('testcontainersVersion', '1.21.4')
 }
 
 java {
@@ -31,6 +31,12 @@ dependencyManagement {
 }
 
 dependencies {
+    constraints {
+        testImplementation('org.apache.commons:commons-compress:1.28.0') {
+            because 'Testcontainers 1.21.x brings an older commons-compress version with published advisories'
+        }
+    }
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
