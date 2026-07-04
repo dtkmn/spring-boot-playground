@@ -34,17 +34,15 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Setup Gradle dependency submission
+      - name: Setup Gradle for dependency graph submission
         uses: gradle/actions/setup-gradle@v6
         with:
           dependency-graph: generate-and-submit
           dependency-graph-continue-on-failure: false
+          dependency-graph-include-configurations: runtimeClasspath
 
       - name: Resolve runtime dependencies
         run: ./gradlew -p "${{ matrix.project }}" dependencies --configuration runtimeClasspath --no-daemon
-
-      - name: Resolve test dependencies
-        run: ./gradlew -p "${{ matrix.project }}" dependencies --configuration testRuntimeClasspath --no-daemon
 
   repository-checks:
     runs-on: ubuntu-latest

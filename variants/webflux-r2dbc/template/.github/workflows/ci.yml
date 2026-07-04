@@ -23,9 +23,14 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+
+      - name: Submit runtime dependency graph
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
+        uses: gradle/actions/dependency-submission@v6
         with:
-          dependency-graph: ${{ github.event_name == 'push' && 'generate-and-submit' || 'disabled' }}
+          dependency-graph: generate-and-submit
           dependency-graph-continue-on-failure: false
+          dependency-graph-include-configurations: runtimeClasspath
 
       - name: Run quality gates
         run: ./gradlew check --no-daemon

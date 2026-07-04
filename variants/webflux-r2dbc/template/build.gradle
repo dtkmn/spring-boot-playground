@@ -10,6 +10,7 @@ group = '__GROUP_ID__'
 version = '0.1.0-SNAPSHOT'
 
 ext {
+    set('opentelemetry.version', '1.62.0')
     set('postgresql.version', '42.7.11')
     set('testcontainersVersion', '1.21.4')
 }
