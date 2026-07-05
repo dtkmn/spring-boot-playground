@@ -6,14 +6,14 @@
 
 This repo is an internal starter candidate. It is ready for controlled pilot adoption, not broad platform-product rollout.
 
-Use `docs/adoption/promotion-brief.md` as the adoption pitch and `docs/releases/version-policy.md` as the dependency baseline. The current stable line remains Java 21 plus Spring Boot 3.5.x while the Boot 4 / Java 25 migration is handled as a separate modernization tranche.
+Use `docs/adoption/promotion-brief.md` as the adoption pitch and `docs/releases/version-policy.md` as the dependency baseline. The current stable line is Java 21 plus Spring Boot 4.1.0.
 
 The default path is `mvc-jpa`. `webflux-r2dbc` remains the supported advanced variant for teams with a real reactive requirement. Optional integrations live under `examples/` and are intentionally outside the starter contract.
 
 ## Starter Contract
 
 Every starter variant should provide:
-- Java 21 and the maintained Spring Boot 3.5.x line
+- Java 21 and the maintained Spring Boot 4.1.x line
 - PostgreSQL plus Flyway
 - Actuator, Prometheus metrics, and OTLP-ready tracing hooks
 - Docker Compose-backed local development plus standalone container smoke coverage
@@ -131,7 +131,7 @@ Default deployment assumptions:
 - no bundled Kafka
 - Actuator-backed health probes
 - HPA support is optional and disabled by default
-- Boot 4 migration is intentionally deferred to the next modernization tranche
+- Java 25 migration remains a separate modernization tranche
 
 ## Governance
 

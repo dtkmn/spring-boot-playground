@@ -2,7 +2,7 @@
 
 ## Baseline
 - Java 21
-- Spring Boot 3.5.x stable line
+- Spring Boot 4.1.x stable line
 - PostgreSQL
 - Kubernetes + Helm deployment path
 
