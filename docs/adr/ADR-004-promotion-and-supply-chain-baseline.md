@@ -23,4 +23,4 @@ The starter is strong enough for controlled adoption but not mature enough to be
 - Promotion claims are backed by generated output, not only documentation.
 - Teams get better build-chain visibility on day one.
 - The repo remains honest about what it does not solve: authorization, runtime scanning, artifact signing, and production security controls still require explicit platform ownership.
-- Boot 4 / Java 25 remains a separate modernization tranche rather than an accidental breaking change folded into promotion work.
+- Java 25 remains a separate modernization tranche rather than an accidental breaking change folded into promotion work.

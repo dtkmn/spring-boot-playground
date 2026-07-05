@@ -25,14 +25,14 @@ Do not sell it as:
 - an authorization framework
 - an eventing framework
 - a service mesh strategy
-- a Boot 4 migration solution
+- a Java runtime migration solution
 - a domain architecture template
 
 ## Promotion Message
 
 The honest pitch:
 
-> This starter gives teams a repeatable Spring service baseline with working local development, tests, container packaging, Helm scaffolding, and release hygiene. It is ready for pilot services. Wider adoption depends on pilot evidence and the Boot 4 / Java 25 modernization tranche.
+> This starter gives teams a repeatable Spring Boot 4.1 service baseline with working local development, tests, container packaging, Helm scaffolding, and release hygiene. It is ready for pilot services. Wider adoption depends on pilot evidence and a later Java 25 modernization tranche.
 
 ## Adoption Rules
 
@@ -51,7 +51,7 @@ Before this becomes the default starter for more than pilot teams:
 3. Generated `mvc-jpa` and `webflux-r2dbc` services must pass `check`, Docker Compose validation, smoke tests, and Helm rendering in CI.
 4. Generated services must publish SBOM artifacts through the CI workflow.
 5. Container images must run as a non-root user by default.
-6. The Boot 4 / Java 25 branch must produce at least one green generated service before the default line changes.
+6. Java 25 must produce at least one green generated service before the Java baseline changes.
 7. Security posture must be explicit: either a starter security baseline is added or the repo documents why service-level auth remains outside the starter contract.
 
 ## Evidence Contract
@@ -75,6 +75,6 @@ Priority order:
 
 1. Finish pilot adoption and collect evidence.
 2. Add an explicit security/auth stance.
-3. Run the Boot 4 / Java 25 modernization tranche.
+3. Run the Java 25 modernization tranche when pilot evidence supports it.
 4. Add OpenAPI generation once the API shape is stable.
 5. Add stricter code quality gates after pilot feedback confirms they will not create busywork.

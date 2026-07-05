@@ -20,8 +20,7 @@ Wider rollout requires the adoption gates in `docs/adoption/promotion-brief.md`.
 ## Compatibility Baseline
 
 - Java 21
-- Spring Boot 3.5.x maintained baseline line
-- Spring Boot 4.x migration planned as the next modernization tranche
+- Spring Boot 4.1.x maintained baseline line
 - PostgreSQL as the default persistence contract
 - Kubernetes plus Helm as the supported cloud deployment path
 
