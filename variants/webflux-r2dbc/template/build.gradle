@@ -44,7 +44,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'org.postgresql:r2dbc-postgresql'
     implementation 'io.micrometer:micrometer-registry-prometheus'
-    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     runtimeOnly 'org.flywaydb:flyway-database-postgresql'
     runtimeOnly 'io.micrometer:micrometer-tracing-bridge-otel'
