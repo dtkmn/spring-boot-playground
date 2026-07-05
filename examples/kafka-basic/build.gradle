@@ -1,3 +1,14 @@
+buildscript {
+    configurations.classpath {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'org.apache.commons' && details.requested.name == 'commons-lang3') {
+                details.useVersion '3.18.0'
+                details.because 'Avoid vulnerable commons-lang3 versions on the Gradle plugin classpath'
+            }
+        }
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.15'

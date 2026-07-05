@@ -1,3 +1,14 @@
+buildscript {
+    configurations.classpath {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'org.codehaus.plexus' && details.requested.name == 'plexus-utils') {
+                details.useVersion '3.6.1'
+                details.because 'Avoid vulnerable plexus-utils versions on the Gradle plugin classpath'
+            }
+        }
+    }
+}
+
 plugins {
     id 'java'
     id 'jacoco'
