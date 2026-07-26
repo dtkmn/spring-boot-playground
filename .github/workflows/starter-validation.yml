@@ -84,6 +84,7 @@ jobs:
           test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
           test -f "generated/${{ matrix.artifact }}/scripts/dev-smoke-test.sh"
           test -f "generated/${{ matrix.artifact }}/scripts/smoke-test.sh"
+          test -f "generated/${{ matrix.artifact }}/scripts/validate-container-image.sh"
           test -d "generated/${{ matrix.artifact }}/build/reports/cyclonedx"
           test -f "generated/${{ matrix.artifact }}/build/reports/jacoco/test/jacocoTestReport.xml"
 

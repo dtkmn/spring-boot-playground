@@ -17,6 +17,7 @@ Every starter variant should provide:
 - PostgreSQL plus Flyway
 - Actuator, Prometheus metrics, and OTLP-ready tracing hooks
 - Docker Compose-backed local development plus standalone container smoke coverage
+- digest-pinned distroless Java runtime with built-image contract validation
 - test baselines suitable for CI
 - Kubernetes deployment support through Helm
 
@@ -68,7 +69,7 @@ Generated services now include:
 - `docker-compose.yml` for full container smoke validation
 - `scripts/dev-smoke-test.sh` and `scripts/smoke-test.sh`
 - local env template plus opt-in structured logging and OTLP tracing hooks
-- non-root runtime Docker image defaults
+- digest-pinned distroless Java runtime running as non-root
 - a vendored Helm chart under `deploy/helm/spring-service-starter`
 - service-specific Helm values for dev, staging, and prod
 

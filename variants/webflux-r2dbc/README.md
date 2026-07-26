@@ -11,5 +11,5 @@ Generated services from this variant include:
 - starter CI workflow, quality reports, SBOM generation, and tag-gated image publish workflow
 - Dependabot plus baseline support/changelog docs
 - release process guidance in `RELEASING.md`
-- non-root runtime Docker image defaults
+- digest-pinned distroless Java runtime running as non-root
 - vendored Helm chart and environment values

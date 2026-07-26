@@ -80,6 +80,9 @@ jobs:
       - name: Build example Docker image
         run: docker build -t "example-${{ matrix.example }}:ci" "examples/${{ matrix.example }}"
 
+      - name: Validate example runtime image
+        run: ./scripts/validate-container-image.sh "example-${{ matrix.example }}:ci"
+
       - name: Validate example Docker Compose
         run: |
           cp "examples/${{ matrix.example }}/.env.example" "examples/${{ matrix.example }}/.env"

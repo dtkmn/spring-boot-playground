@@ -5,9 +5,9 @@ COPY build.gradle .
 COPY settings.gradle .
 RUN gradle --no-daemon bootJar -x test
 
-FROM eclipse-temurin:21.0.11_10-jre-alpine-3.22
+FROM gcr.io/distroless/java21-debian13:nonroot@sha256:8ee299a87382317dd56ee4ffdd9c48f0541f1afe33ea2b64f2f880decd82acf6
 WORKDIR /app
 COPY --from=builder /usr/src/app/build/libs/app.jar ./app.jar
 EXPOSE __APP_PORT__ __MANAGEMENT_PORT__
-USER 10001:10001
-CMD ["java", "-jar", "./app.jar"]
+USER 65532:65532
+CMD ["app.jar"]

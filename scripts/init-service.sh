@@ -108,6 +108,7 @@ cp "$repo_root/gradlew" "$output_dir/"
 cp "$repo_root/gradlew.bat" "$output_dir/"
 mkdir -p "$output_dir/gradle"
 cp -R "$repo_root/gradle/wrapper" "$output_dir/gradle/"
+cp "$repo_root/scripts/validate-container-image.sh" "$output_dir/scripts/"
 
 if [[ -d "$shared_chart_dir" ]]; then
   mkdir -p "$output_dir/deploy/helm"

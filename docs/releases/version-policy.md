@@ -6,7 +6,7 @@ This document keeps the starter from drifting into accidental legacy. Dependency
 
 ## Current Baseline
 
-As of July 5, 2026:
+As of July 27, 2026:
 
 | Layer | Default | Status |
 | --- | --- | --- |
@@ -14,6 +14,7 @@ As of July 5, 2026:
 | Spring Boot | 4.1.0 | Stable starter baseline |
 | Gradle | 9.6.1 | Current wrapper and Docker builder baseline |
 | PostgreSQL | 17 | Local and integration-test baseline |
+| Runtime image | Distroless Java 21 on Debian 13 | Digest-pinned, non-root baseline |
 | Java 25 | Future migration tranche | Not the default yet |
 
 References:
@@ -29,6 +30,7 @@ References:
 - Java baseline changes require generated service tests, smoke tests, Docker builds, and Helm rendering to pass.
 - Spring Boot major-version changes require migration notes and generated starter validation.
 - Gradle wrapper and Docker builder image versions should stay aligned.
+- Distroless runtime digest updates require generated container smoke validation.
 - Examples should follow the starter baseline unless an example has a documented integration constraint.
 
 ## Stable Line
@@ -37,6 +39,7 @@ The stable line is Java 21 and Spring Boot 4.1.0. It remains stable only while:
 
 - generated `mvc-jpa` and `webflux-r2dbc` services compile and test cleanly
 - Docker images build and run
+- built runtime images pass the non-root, Java entrypoint, command, and shell-absence checks
 - the Helm chart renders without compatibility changes
 - RFC 9457 problem details still behave consistently
 - Flyway, Testcontainers, Actuator, Micrometer, and OTLP hooks remain compatible
