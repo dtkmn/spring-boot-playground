@@ -81,8 +81,12 @@ for template_path in "variants/mvc-jpa/template" "variants/webflux-r2dbc/templat
     "Missing CycloneDX SBOM plugin"
   require_contains "$template_path/build.gradle" "id 'jacoco'" \
     "Missing JaCoCo coverage plugin"
-  require_contains "$template_path/Dockerfile" "USER 10001:10001" \
-    "Dockerfile must run as a non-root user"
+  require_contains "$template_path/Dockerfile" "FROM gcr.io/distroless/java21-debian13:nonroot@sha256:" \
+    "Dockerfile must pin the supported distroless Java runtime"
+  require_contains "$template_path/Dockerfile" "USER 65532:65532" \
+    "Dockerfile must run as the distroless non-root user"
+  require_contains "$template_path/Dockerfile" 'CMD ["app.jar"]' \
+    "Dockerfile must pass only app.jar to the distroless Java entrypoint"
   require_contains "$template_path/.github/workflows/ci.yml" "./gradlew check --no-daemon" \
     "CI must run Gradle check"
   require_contains "$template_path/.github/workflows/publish.yml" "./gradlew check --no-daemon" \

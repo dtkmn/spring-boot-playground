@@ -23,4 +23,4 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - Upgrade starter and example baseline to Spring Boot 4.1.0 and align Docker builder images on Gradle 9.6.1
 - Move starter integration tests to Spring Boot Testcontainers service connections
 - Run generated starter CI and publish workflows through `./gradlew check`
-- Harden starter and example Docker runtime images to run as a non-root user
+- Replace starter and example Alpine runtimes with a digest-pinned, non-root distroless Java image

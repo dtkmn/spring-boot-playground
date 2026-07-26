@@ -13,5 +13,5 @@
 ## Release Contract
 - CI validates `./gradlew check`, Docker Compose, and Helm rendering
 - CI uploads test, coverage, and CycloneDX SBOM reports
-- Runtime Docker images run as a non-root user by default
+- Runtime Docker images use a digest-pinned distroless Java base and run as non-root
 - `v*` git tags publish Docker images to GHCR

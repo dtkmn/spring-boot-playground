@@ -50,7 +50,7 @@ Before this becomes the default starter for more than pilot teams:
 2. Pilot teams must report setup time, changes made after generation, and missing defaults.
 3. Generated `mvc-jpa` and `webflux-r2dbc` services must pass `check`, Docker Compose validation, smoke tests, and Helm rendering in CI.
 4. Generated services must publish SBOM artifacts through the CI workflow.
-5. Container images must run as a non-root user by default.
+5. Container images must use the digest-pinned, non-root distroless runtime by default, with any exception documented and tested.
 6. Java 25 must produce at least one green generated service before the Java baseline changes.
 7. Security posture must be explicit: either a starter security baseline is added or the repo documents why service-level auth remains outside the starter contract.
 

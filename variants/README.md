@@ -11,6 +11,6 @@ Each generated service includes:
 - Dockerfile, Docker Compose, and `.env.example`
 - starter CI workflow, quality reports, SBOM generation, and tag-gated publish workflow
 - Dependabot plus baseline support/changelog docs
-- non-root runtime Docker image defaults
+- digest-pinned distroless Java runtime running as non-root
 - `RELEASING.md` with stabilization and release rules
 - vendored Helm chart and service-specific values files

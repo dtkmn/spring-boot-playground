@@ -4,7 +4,7 @@ Examples are outside the starter contract. They exist to show how to add optiona
 
 Each example is self-contained:
 - its own Gradle build
-- its own Dockerfile and Docker Compose stack
+- its own distroless Java Dockerfile and Docker Compose stack
 - its own `.env.example`
 - its own README
 
