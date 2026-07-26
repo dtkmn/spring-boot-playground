@@ -10,7 +10,6 @@ The starter now includes:
 - CycloneDX SBOM generation through the Gradle `check` lifecycle
 - CI upload of test, coverage, and SBOM reports
 - digest-pinned, non-root distroless Java runtime containers by default
-- built-image validation for runtime user, Java entrypoint, command, and shell absence
 - tag-gated image publishing for generated services
 
 ## What This Does Not Solve
@@ -45,8 +44,8 @@ Before a release:
 
 - `./gradlew check` must generate SBOM output for each generated starter.
 - Generated CI must upload SBOM and coverage reports.
-- Packaged-container smoke tests must run `scripts/validate-container-image.sh` against the built application image.
-- Runtime images must keep an effective non-root user and must not contain `/bin/sh`.
+- Dockerfiles must keep the digest-pinned distroless base and explicit non-root user.
+- Generated application images must pass packaged-container smoke tests.
 - Dependabot must cover Gradle, GitHub Actions, and Docker files.
 
 ## Runtime Exceptions

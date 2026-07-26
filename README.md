@@ -17,7 +17,7 @@ Every starter variant should provide:
 - PostgreSQL plus Flyway
 - Actuator, Prometheus metrics, and OTLP-ready tracing hooks
 - Docker Compose-backed local development plus standalone container smoke coverage
-- digest-pinned distroless Java runtime with built-image contract validation
+- digest-pinned, non-root distroless Java runtime
 - test baselines suitable for CI
 - Kubernetes deployment support through Helm
 

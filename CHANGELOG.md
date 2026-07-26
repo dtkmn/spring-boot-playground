@@ -24,4 +24,3 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - Move starter integration tests to Spring Boot Testcontainers service connections
 - Run generated starter CI and publish workflows through `./gradlew check`
 - Replace starter and example Alpine runtimes with a digest-pinned, non-root distroless Java image
-- Validate built application images for their effective user, Java entrypoint, command, and absence of a shell

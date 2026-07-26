@@ -37,5 +37,4 @@ See `docs/releases/version-policy.md` for baseline and migration rules.
 - Generated starters produce CycloneDX SBOM output during `./gradlew check`.
 - Generated starter CI uploads test, coverage, and SBOM reports.
 - Generated Dockerfiles use a digest-pinned distroless Java runtime.
-- Generated container smoke tests verify the effective non-root user and shell-free runtime.
 - Dependabot tracks Gradle, GitHub Actions, and Docker base images.

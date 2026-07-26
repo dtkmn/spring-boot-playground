@@ -39,7 +39,7 @@ The stable line is Java 21 and Spring Boot 4.1.0. It remains stable only while:
 
 - generated `mvc-jpa` and `webflux-r2dbc` services compile and test cleanly
 - Docker images build and run
-- built runtime images pass the non-root, Java entrypoint, command, and shell-absence checks
+- generated images pass packaged-container smoke tests on the pinned non-root distroless runtime
 - the Helm chart renders without compatibility changes
 - RFC 9457 problem details still behave consistently
 - Flyway, Testcontainers, Actuator, Micrometer, and OTLP hooks remain compatible

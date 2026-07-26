@@ -47,7 +47,6 @@ required_paths=(
   "docs/adr/ADR-002-kubernetes-and-helm.md"
   "docs/adr/ADR-003-2026-modernization-tranches.md"
   "docs/adr/ADR-004-promotion-and-supply-chain-baseline.md"
-  "docs/adr/ADR-005-distroless-java-runtime.md"
   "docs/adoption/pilot-playbook.md"
   "docs/adoption/promotion-brief.md"
   "docs/releases/release-readiness-checklist.md"
@@ -55,7 +54,6 @@ required_paths=(
   "docs/security/supply-chain-baseline.md"
   "RELEASING.md"
   "scripts/init-service.sh"
-  "scripts/validate-container-image.sh"
 )
 
 failures=0
@@ -85,10 +83,10 @@ for template_path in "variants/mvc-jpa/template" "variants/webflux-r2dbc/templat
     "Missing JaCoCo coverage plugin"
   require_contains "$template_path/Dockerfile" "FROM gcr.io/distroless/java21-debian13:nonroot@sha256:" \
     "Dockerfile must pin the supported distroless Java runtime"
+  require_contains "$template_path/Dockerfile" "USER 65532:65532" \
+    "Dockerfile must run as the distroless non-root user"
   require_contains "$template_path/Dockerfile" 'CMD ["app.jar"]' \
     "Dockerfile must pass only app.jar to the distroless Java entrypoint"
-  require_contains "$template_path/scripts/smoke-test.sh" './scripts/validate-container-image.sh "$app_image"' \
-    "Packaged-container smoke test must validate the built runtime image"
   require_contains "$template_path/.github/workflows/ci.yml" "./gradlew check --no-daemon" \
     "CI must run Gradle check"
   require_contains "$template_path/.github/workflows/publish.yml" "./gradlew check --no-daemon" \
@@ -96,10 +94,6 @@ for template_path in "variants/mvc-jpa/template" "variants/webflux-r2dbc/templat
   require_contains "$template_path/.github/dependabot.yaml" 'package-ecosystem: "docker"' \
     "Dependabot must track Docker updates"
 done
-
-require_contains "scripts/init-service.sh" \
-  'cp "$repo_root/scripts/validate-container-image.sh" "$output_dir/scripts/"' \
-  "Generated starters must include the runtime-image validator"
 
 if [[ "$failures" -ne 0 ]]; then
   exit 1

@@ -47,7 +47,7 @@ This checklist is usable only when every checked item has evidence: a CI run, co
 - The `Starter Validation` workflow passes for both `mvc-jpa` and `webflux-r2dbc`.
 - Generated starters pass build, Docker Compose config validation, development smoke test, packaged-container smoke test, Helm lint, and Helm template.
 - Generated starters produce test, JaCoCo, and CycloneDX report output under `generated/<artifact>/build/reports/`.
-- Generated runtime Docker images pass the distroless contract check for effective non-root user, Java entrypoint, command, and shell absence.
+- Generated runtime Docker images use the pinned non-root distroless base and pass packaged-container smoke tests.
 - Any service that cannot use the default distroless runtime has a reviewed exception and dedicated runtime smoke coverage.
 
 ### Governance

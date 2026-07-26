@@ -70,7 +70,7 @@ Application errors use RFC `9457` problem details with:
 
 `./gradlew check` generates a CycloneDX SBOM under `build/reports/cyclonedx/` and JaCoCo coverage output under `build/reports/jacoco/`. CI uploads these reports as build artifacts.
 
-The production image uses a digest-pinned distroless Java runtime and runs as a non-root user. The packaged-container smoke test verifies the effective image user, Java entrypoint, command, and absence of `/bin/sh`. Dependabot tracks Gradle, GitHub Actions, and Docker updates.
+The production image uses a digest-pinned distroless Java runtime and runs as a non-root user. The packaged-container smoke test verifies that the application starts and serves its health and API endpoints. Dependabot tracks Gradle, GitHub Actions, and Docker updates.
 
 The production image intentionally has no shell or package manager. Use application logs, Actuator, metrics, traces, JVM diagnostics, or an ephemeral debug container for investigation. A service that requires OS packages, native libraries, fonts, or shell execution must document and test its runtime-image exception.
 

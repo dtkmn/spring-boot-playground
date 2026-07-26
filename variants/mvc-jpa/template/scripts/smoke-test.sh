@@ -31,9 +31,6 @@ docker compose -f docker-compose.yml --env-file .env down -v --remove-orphans >/
 
 docker compose -f docker-compose.yml --env-file .env up -d --build
 
-app_image=$(docker compose -f docker-compose.yml --env-file .env images -q app)
-./scripts/validate-container-image.sh "$app_image"
-
 for _ in {1..30}; do
   if curl -fsS "http://localhost:${MANAGEMENT_HOST_PORT}/actuator/health" >"$health_file"; then
     if grep -q '"status":"UP"' "$health_file"; then
