@@ -5,7 +5,7 @@ COPY build.gradle .
 COPY settings.gradle .
 RUN gradle --no-daemon bootJar -x test
 
-FROM gcr.io/distroless/java21-debian13:nonroot@sha256:8ee299a87382317dd56ee4ffdd9c48f0541f1afe33ea2b64f2f880decd82acf6
+FROM gcr.io/distroless/java21-debian13:nonroot@sha256:e7c40c2378f8c4462aea63041f6b29b7f2b9ab8e80b9217d6d5faf70dfff1779
 WORKDIR /app
 COPY --from=builder /usr/src/app/build/libs/app.jar ./app.jar
 EXPOSE 8080
