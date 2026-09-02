@@ -6,22 +6,22 @@ This document keeps the starter from drifting into accidental legacy. Dependency
 
 ## Current Baseline
 
-As of July 27, 2026:
+As of September 2, 2026:
 
 | Layer | Default | Status |
 | --- | --- | --- |
 | Java | 21 | Stable starter baseline |
-| Spring Boot | 4.1.0 | Stable starter baseline |
-| Gradle | 9.6.1 | Current wrapper and Docker builder baseline |
+| Spring Boot | 4.1.1 | Stable starter baseline |
+| Gradle | 9.7.1 | Current wrapper and Docker builder baseline |
 | PostgreSQL | 17 | Local and integration-test baseline |
 | Runtime image | Distroless Java 21 on Debian 13 | Digest-pinned, non-root baseline |
 | Java 25 | Future migration tranche | Not the default yet |
 
 References:
 
-- Spring Boot 4.1.0 was released on June 10, 2026: https://spring.io/blog/2026/06/10/spring-boot-4
+- Spring Boot 4.1.1 was released on August 20, 2026: https://spring.io/blog/2026/08/20/spring-boot-4-1-1-available-now/
 - Oracle announced Java 25 on September 16, 2025 with long-term support: https://www.oracle.com/news/announcement/oracle-releases-java-25-2025-09-16
-- Gradle 9.6.1 was published on June 26, 2026: https://gradle.org/releases
+- Gradle 9.7.1 was released on August 19, 2026: https://docs.gradle.org/9.7.1/release-notes.html
 
 ## Baseline Rules
 
@@ -35,7 +35,7 @@ References:
 
 ## Stable Line
 
-The stable line is Java 21 and Spring Boot 4.1.0. It remains stable only while:
+The stable line is Java 21 and Spring Boot 4.1.1. It remains stable only while:
 
 - generated `mvc-jpa` and `webflux-r2dbc` services compile and test cleanly
 - Docker images build and run
