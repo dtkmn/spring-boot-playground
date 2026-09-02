@@ -6,7 +6,7 @@
 
 This repo is an internal starter candidate. It is ready for controlled pilot adoption, not broad platform-product rollout.
 
-Use `docs/adoption/promotion-brief.md` as the adoption pitch and `docs/releases/version-policy.md` as the dependency baseline. The current stable line is Java 21 plus Spring Boot 4.1.0.
+Use `docs/adoption/promotion-brief.md` as the adoption pitch and `docs/releases/version-policy.md` as the dependency baseline. The current stable line is Java 21 plus Spring Boot 4.1.1.
 
 The default path is `mvc-jpa`. `webflux-r2dbc` remains the supported advanced variant for teams with a real reactive requirement. Optional integrations live under `examples/` and are intentionally outside the starter contract.
 

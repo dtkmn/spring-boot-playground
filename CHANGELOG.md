@@ -20,7 +20,7 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 ### Changed
 - Reposition repository from playground to Spring service starter
 - Add starter variants, examples scaffolding, bootstrap script, and Helm chart
-- Upgrade starter and example baseline to Spring Boot 4.1.0 and align Docker builder images on Gradle 9.6.1
+- Upgrade the starter and example baseline to Spring Boot 4.1.1, upgrade CycloneDX to 3.4.1, and align the Gradle wrapper and Docker builder images on Gradle 9.7.1
 - Move starter integration tests to Spring Boot Testcontainers service connections
 - Run generated starter CI and publish workflows through `./gradlew check`
 - Replace starter and example Alpine runtimes with a digest-pinned, non-root distroless Java image
