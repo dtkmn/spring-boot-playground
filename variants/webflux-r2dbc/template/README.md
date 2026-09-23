@@ -62,9 +62,26 @@ Application errors use RFC `9457` problem details with:
 
 ## Observability
 
-- Prometheus metrics remain exposed through Actuator
-- OTLP tracing can be enabled by setting `MANAGEMENT_OTLP_TRACING_ENDPOINT`
-- Structured JSON console logs are opt-in through the `structured-logging` profile
+Prometheus metrics are exposed at `/actuator/prometheus` on the management port. Spring Boot's OpenTelemetry starter enables request tracing and adds `traceId` and `spanId` to logs written within a trace. The default sampling probability is 10%; tune it with `MANAGEMENT_TRACING_SAMPLING_PROBABILITY` (from `0.0` to `1.0`).
+
+Automatic Reactor context propagation is enabled so trace context and log correlation survive asynchronous boundaries in reactive request handling.
+
+OTLP metric export is disabled by default; Prometheus remains the metrics backend. No collector is required for local development: traces are not exported until an OTLP endpoint is configured. With an OTLP HTTP collector running locally, enable export and sample every request for troubleshooting:
+
+```bash
+MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT=http://localhost:4318/v1/traces \
+MANAGEMENT_TRACING_SAMPLING_PROBABILITY=1.0 \
+./gradlew bootRun
+```
+
+Spring Boot 4 uses `MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT`; replace the old `MANAGEMENT_OTLP_TRACING_ENDPOINT` setting. Pass the new variable to the application process or container at runtime. For Helm, use the chart's `env` map with a collector address reachable from the pod:
+
+```yaml
+env:
+  MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+```
+
+Structured JSON console logs are opt-in with `SPRING_PROFILES_ACTIVE=structured-logging`; they include trace correlation fields when a trace is active. See [Spring Boot tracing](https://docs.spring.io/spring-boot/4.1/reference/actuator/tracing.html) for configuration and propagation details.
 
 ## Supply chain
 

@@ -1,0 +1,87 @@
+name: CodeQL
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
+  schedule:
+    - cron: '43 4 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  java:
+    name: Java (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - examples/kafka-basic
+          - examples/kafka-streams
+          - examples/binance-websocket
+          - variants/mvc-jpa/template
+          - variants/webflux-r2dbc/template
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: temurin
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      # Each project gets its own database so template package names cannot collide.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
+        with:
+          languages: java-kotlin
+          build-mode: manual
+          source-root: ${{ matrix.project }}
+
+      - name: Compile project for analysis
+        env:
+          PROJECT_DIR: ${{ matrix.project }}
+        run: |
+          ./gradlew -p "$PROJECT_DIR" clean compileJava compileTestJava \
+            --no-daemon --no-build-cache --no-configuration-cache
+
+      - name: Analyze Java
+        uses: github/codeql-action/analyze@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
+        with:
+          category: /language:java-kotlin/project:${{ matrix.project }}
+
+  actions:
+    name: GitHub Actions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
+        with:
+          languages: actions
+          build-mode: none
+
+      - name: Analyze GitHub Actions
+        uses: github/codeql-action/analyze@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
+        with:
+          category: /language:actions

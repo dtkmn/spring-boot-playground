@@ -28,6 +28,10 @@ Pretending otherwise would be sloppy. This baseline improves visibility and defa
 
 ## Scanner Policy
 
+Repository CodeQL analysis uses a separate manual build for each Gradle project.
+See [CodeQL analysis](codeql.md) for its coverage and the switch from GitHub's
+default setup to the checked-in advanced workflow.
+
 Do not add a mutable third-party scanner action casually. In March 2026, the Trivy GitHub Action ecosystem was compromised through force-pushed tags and malicious releases. That incident is a useful warning: security tooling can become the attack path.
 
 If a vulnerability scanner is added to generated workflows, require:
