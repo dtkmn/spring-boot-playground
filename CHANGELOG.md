@@ -26,4 +26,5 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - Replace starter and example Alpine runtimes with a digest-pinned, non-root distroless Java image
 
 ### Fixed
+- Analyze each Gradle project separately with CodeQL to avoid failed root dependency discovery and duplicate template class exclusions
 - Restore Spring Boot 4 tracing auto-configuration and log correlation in both starter variants, with documented opt-in OTLP export and no collector required by default
