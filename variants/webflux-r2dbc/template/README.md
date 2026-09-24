@@ -181,6 +181,13 @@ helm upgrade --install __ARTIFACT_ID__ deploy/helm/spring-service-starter \
 Service-specific deployment values live under `deploy/helm/`.
 Optional hardening values include service-account controls, pod annotations, pod/container security contexts, node scheduling hints, and a pod disruption budget.
 
+## Starter updates
+
+[STARTER.md](STARTER.md) records this scaffold's origin and original generation
+options. Follow the [manual upgrade guide](https://github.com/dtkmn/spring-boot-playground/blob/main/docs/adoption/upgrading-generated-services.md)
+to adopt newer starter changes while preserving application code. Dependency
+updates do not synchronize copied code, workflows, scripts, or Helm assets.
+
 ## Release workflow
 
 Create and push a `v*` tag to publish the container image to GHCR:

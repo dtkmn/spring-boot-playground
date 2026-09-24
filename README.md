@@ -109,6 +109,7 @@ the assets below.
 Generated services include:
 - application code for the selected variant
 - the starter's MIT license and copyright notice
+- `STARTER.md` with the source commit, release status, variant, and original generation options
 - `.dockerignore` and `.gitignore`
 - `gradlew`, `gradlew.bat`, and `gradle/wrapper`
 - a starter CI workflow under `.github/workflows/ci.yml`
@@ -124,6 +125,9 @@ Generated services include:
 - digest-pinned distroless Java runtime running as non-root
 - a vendored Helm chart under `deploy/helm/spring-service-starter`
 - service-specific Helm values for dev, staging, and prod
+
+For an existing service, follow the [manual upgrade guide](docs/adoption/upgrading-generated-services.md)
+to compare starter versions and apply relevant changes while preserving application code.
 
 ## Variants
 

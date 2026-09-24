@@ -86,7 +86,7 @@ case "$variant" in
 esac
 
 script_dir=$(cd "$(dirname "$0")" && pwd)
-repo_root=$(cd "$script_dir/.." && pwd)
+repo_root=$(cd "$script_dir/.." && pwd -P)
 template_dir="$repo_root/variants/$variant/template"
 shared_chart_dir="$repo_root/deploy/helm/spring-service-starter"
 output_dir=${output_dir:-"$repo_root/generated/$artifact_id"}
@@ -100,6 +100,29 @@ fi
 if [[ -e "$output_dir" ]]; then
   echo "Output directory already exists: $output_dir" >&2
   exit 1
+fi
+
+# Capture the source before generation creates any files. An extracted copy
+# inside another repository must not inherit that repository's commit.
+starter_commit="unknown"
+starter_version="unknown"
+starter_worktree="unknown"
+if [[ "$(git -C "$repo_root" rev-parse --show-toplevel 2>/dev/null || true)" == "$repo_root" ]] \
+    && starter_commit=$(git -C "$repo_root" rev-parse --verify HEAD 2>/dev/null); then
+  starter_version="unreleased"
+  starter_worktree="modified"
+  source_changes=$(git -C "$repo_root" status --porcelain --untracked-files=normal)
+  if [[ -z "$source_changes" ]]; then
+    starter_worktree="clean"
+    while IFS= read -r starter_tag; do
+      if [[ "$starter_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        starter_version="$starter_tag"
+        break
+      fi
+    done < <(git -C "$repo_root" tag --points-at HEAD --list 'v*' --sort=-version:refname)
+  fi
+else
+  starter_commit="unknown"
 fi
 
 mkdir -p "$output_dir"
@@ -145,5 +168,44 @@ while IFS= read -r -d '' file; do
     printf '%s' "$content" > "$file"
   fi
 done < <(find "$output_dir" -type f -print0)
+
+{
+  cat <<EOF
+# Starter origin
+
+- Upstream repository: https://github.com/dtkmn/spring-boot-playground
+- Source commit: $starter_commit
+- Source version: $starter_version
+- Working tree: $starter_worktree
+- Variant: $variant
+
+This records the original generation baseline, not the current application version
+or which later starter changes have been applied. Only a clean checkout with an
+exact local release tag records a release version. A modified checkout includes
+local changes that the recorded commit cannot reproduce; retain that source copy.
+Unknown values mean Git metadata was unavailable for this starter copy.
+
+## Original generation options
+
+Run from the matching starter checkout. Add --output-dir with a fresh directory
+when comparing versions; keep the existing application separate.
+
+EOF
+  printf '```bash\n./scripts/init-service.sh'
+  printf ' \\\n  --%s %q' \
+    variant "$variant" \
+    service-name "$service_name" \
+    group-id "$group_id" \
+    artifact-id "$artifact_id" \
+    package-name "$package_name" \
+    app-port "$app_port" \
+    management-port "$management_port"
+  printf '\n```\n\n'
+  cat <<'EOF'
+For manual updates, follow the [upgrade guide](https://github.com/dtkmn/spring-boot-playground/blob/main/docs/adoption/upgrading-generated-services.md).
+Keep this origin record and append the target commit and selected changes after
+each upgrade; replacing it with a new sample's record would lose the original baseline.
+EOF
+} > "$output_dir/STARTER.md"
 
 echo "Generated $variant starter at $output_dir"

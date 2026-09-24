@@ -7,6 +7,7 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 ## [Unreleased]
 
 ### Added
+- Generated `STARTER.md` records source provenance and regeneration options, with a manual upgrade guide for existing services
 - MIT licensing for the starter and copied scaffold, with the license included in newly generated services
 
 ### Changed

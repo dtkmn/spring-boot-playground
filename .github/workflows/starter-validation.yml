@@ -67,6 +67,9 @@ jobs:
       - name: Check generated starter assets
         run: |
           test -f "generated/${{ matrix.artifact }}/README.md"
+          grep -Fxq -- "- Source commit: $(git rev-parse HEAD)" "generated/${{ matrix.artifact }}/STARTER.md"
+          grep -Fxq -- "- Working tree: clean" "generated/${{ matrix.artifact }}/STARTER.md"
+          grep -Fxq -- "- Variant: ${{ matrix.variant }}" "generated/${{ matrix.artifact }}/STARTER.md"
           test -f "generated/${{ matrix.artifact }}/.dockerignore"
           test -f "generated/${{ matrix.artifact }}/.gitignore"
           test -f "generated/${{ matrix.artifact }}/gradlew"
