@@ -55,6 +55,12 @@ Generate a new service from the default variant:
 
 Output is created under `generated/<artifact-id>` by default.
 
+The raw templates use the repository's shared Gradle wrapper. The generator
+copies that wrapper into each generated service; do not add separate wrappers
+under `variants/*/template`. In IntelliJ IDEA, import a generated service as a
+Gradle project. Linking a raw template can cause the IDE to generate another
+wrapper inside it.
+
 Generated services now include:
 - application code for the selected variant
 - `.dockerignore` and `.gitignore`

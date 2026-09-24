@@ -7,10 +7,6 @@ plugins {
 group = 'tech.dtkmn.examples'
 version = '0.1.0-SNAPSHOT'
 
-ext {
-    set('kafka.version', '3.9.2')
-}
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -22,13 +18,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-jackson'
     implementation 'org.apache.kafka:kafka-streams'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.apache.kafka:kafka-streams-test-utils'
 }
 
 tasks.named('test') {
