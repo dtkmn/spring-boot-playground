@@ -17,7 +17,7 @@ Bootstrap data is loaded into Kafka automatically when the example starts.
 Spring Boot configures the Jackson 3 `JsonMapper` used by the trade parser and
 Spring Kafka's `JacksonJsonSerde`. Kafka Streams uses Boot's managed version;
 the former Kafka 3.9.2 override is incompatible with Spring Kafka 4.1's Streams
-factory. See the [Boot 4 migration notes](../../docs/migrations/spring-boot-4.md).
+factory.
 
 The test suite starts the Spring application context with broker connections
 disabled, then runs two trades through the real topology with

@@ -150,7 +150,6 @@ Default deployment assumptions:
 - `docs/adoption/promotion-brief.md`: internal promotion stance and adoption gates
 - `docs/releases/release-readiness-checklist.md`: `v1.0.0` readiness gates
 - `docs/releases/version-policy.md`: Java, Spring Boot, Gradle, and migration policy
-- [Spring Boot 4 migration notes](docs/migrations/spring-boot-4.md): dependency, code, configuration, and verification changes
 - `docs/security/supply-chain-baseline.md`: SBOM, Dependabot, and scanner guardrails
 - `docs/adr`: architectural decisions
 
