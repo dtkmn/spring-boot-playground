@@ -16,6 +16,9 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - Document a complete first run and separate everyday development from disposable smoke checks
 - Define latest-stable maintenance, patch cadence, and application owners' responsibility for dependencies and copied starter assets
 
+### Fixed
+- Remove outdated PostgreSQL JDBC overrides so both variants use Spring Boot's patched 42.7.13 driver (CVE-2026-54291)
+
 ## [1.0.0] - 2026-09-24
 
 First versioned release of the Spring service starter, with MVC/JPA as the default and WebFlux/R2DBC as the advanced variant.

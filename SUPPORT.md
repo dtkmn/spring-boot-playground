@@ -8,6 +8,7 @@ Both variants are validated using generated services with PostgreSQL, Docker Com
 
 ## Update Cadence
 
+- Review dependency alerts, update pull requests, and CI failures weekly.
 - Plan dependency and framework refreshes quarterly.
 - Apply compatible patches promptly after generated-service validation.
 - Prioritize security fixes and critical regressions outside the planned refresh cycle, with the same validation requirements.
