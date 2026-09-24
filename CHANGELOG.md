@@ -6,6 +6,10 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-24
+
+First versioned release of the Spring service starter, with MVC/JPA as the default and WebFlux/R2DBC as the advanced variant.
+
 ### Added
 - Formal release process and stabilization rules for the starter repository
 - Pilot playbook, pilot feedback template, and release readiness checklist
