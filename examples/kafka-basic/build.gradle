@@ -8,6 +8,7 @@ group = 'tech.dtkmn.examples'
 version = '0.1.0-SNAPSHOT'
 
 ext {
+    set('tomcat.version', '11.0.26')
     set('kafka.version', '3.9.2')
 }
 
