@@ -27,6 +27,7 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - Replace starter and example Alpine runtimes with a digest-pinned, non-root distroless Java image
 
 ### Fixed
+- Keep local build output, caches, IDE files, and `.env` out of generated services, and preserve binary assets during placeholder replacement
 - Complete Kafka Streams startup on Boot 4 with Jackson 3 and Boot-managed Kafka dependencies, and add context and trade-aggregation regression tests
 - Analyze each Gradle project separately with CodeQL to avoid failed root dependency discovery and duplicate template class exclusions
 - Restore Spring Boot 4 tracing auto-configuration and log correlation in both starter variants, with documented opt-in OTLP export and no collector required by default
