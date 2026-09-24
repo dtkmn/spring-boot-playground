@@ -2,7 +2,7 @@
 
 ## Status
 
-The starter is being prepared for v1.0. Both variants have passed generated-service trials covering tests, Docker Compose, Kubernetes deployment, API behavior, and persistence after restart.
+The starter's [v1.0.0 release](https://github.com/dtkmn/spring-boot-playground/releases/tag/v1.0.0) is available. Both variants have passed generated-service trials covering tests, Docker Compose, Kubernetes deployment, API behavior, and persistence after restart.
 
 These checks establish a working baseline. Each adopting service still needs its own production configuration and operational review.
 

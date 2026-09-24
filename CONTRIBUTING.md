@@ -2,7 +2,15 @@
 
 ## Purpose
 
-This repository is the internal Spring service starter. Changes should improve the default engineering path, not add general-purpose demo code into the core starter contract.
+This public repository provides a practical Spring service starter. Contributions
+should make generated services easier to adopt and maintain. Optional integrations
+belong in `examples/` so the core starter stays focused.
+
+Start with the [open issues](https://github.com/dtkmn/spring-boot-playground/issues)
+and their scope and acceptance criteria. Comment on the issue before starting
+substantial work to coordinate with other contributors. Use the root README's
+generation command from your modified working branch so validation exercises
+your changes. Then use the generated README for build, test, and extension commands.
 
 ## Rules
 

@@ -6,6 +6,16 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 
 ## [Unreleased]
 
+### Added
+- Generated `STARTER.md` records source provenance and regeneration options, with a manual upgrade guide for existing services
+- MIT licensing for the starter and copied scaffold, with the license included in newly generated services
+
+### Changed
+- Remove the generator's Perl dependency by using Bash's built-in placeholder replacement
+- Clarify the public starter's purpose and contributor entry point
+- Document a complete first run and separate everyday development from disposable smoke checks
+- Define latest-stable maintenance, patch cadence, and application owners' responsibility for dependencies and copied starter assets
+
 ## [1.0.0] - 2026-09-24
 
 First versioned release of the Spring service starter, with MVC/JPA as the default and WebFlux/R2DBC as the advanced variant.

@@ -2,6 +2,11 @@
 
 Spring MVC + JPA starter service generated from the Spring Service Starter repository.
 
+The copied starter scaffold is covered by the [MIT License](LICENSE). Retain its
+copyright and permission notice when distributing copies or substantial portions.
+Third-party components, including the Gradle wrapper, retain their own licenses
+and notices. The application owner chooses the license for their own additions.
+
 ## Stack
 - Java 21
 - Spring Boot
@@ -18,30 +23,91 @@ Spring MVC + JPA starter service generated from the Spring Service Starter repos
 
 ## Local development
 
+Run commands from this generated service directory with a Java 21 JDK and a
+running Docker engine with Docker Compose v2. The Gradle wrapper installs Gradle
+on its first run. Bash and `curl` are also required for the smoke scripts.
+
+On first setup, copy the local database configuration:
+
 ```bash
 cp .env.example .env
-./gradlew test
-./gradlew check
-./gradlew bootRun
-./scripts/dev-smoke-test.sh
-./scripts/smoke-test.sh
 ```
 
-`./gradlew bootRun` uses `compose.yaml` plus Spring Boot development services to start PostgreSQL automatically when Docker is available.
+Keep `.env` local; it is ignored by Git. Start the application in the foreground:
+
+```bash
+./gradlew bootRun
+```
+
+Spring Boot uses `compose.yaml` to start PostgreSQL on an available host port and
+configure the database connection. Flyway creates the schema and seeds a customer.
+Once startup completes, use a second terminal:
+
+```bash
+curl -fsS http://localhost:__APP_PORT__/api/v1/customers
+```
+
+A fresh database returns:
+
+```json
+[{"id":1,"firstName":"John","lastName":"Doe"}]
+```
+
+Health is available at `http://localhost:__MANAGEMENT_PORT__/actuator/health`.
+Press Ctrl-C in the application terminal to stop the application and its managed
+PostgreSQL container. Restart with `./gradlew bootRun`; data survives while you keep
+the database container. If you started PostgreSQL separately, stop it with
+`docker compose -f compose.yaml --env-file .env stop`.
+
+If the application ports are occupied, set process environment variables:
+
+```bash
+SERVER_PORT=18080 MANAGEMENT_SERVER_PORT=18081 ./gradlew bootRun
+```
+
+Use the overridden ports in requests. `APP_HOST_PORT` and `MANAGEMENT_HOST_PORT`
+in `.env` configure the container workflow and smoke scripts, not a plain `bootRun`.
+
+## Build, test, and extend
+
+- `./gradlew check`: run the tests and produce coverage and SBOM reports. Integration tests use disposable PostgreSQL containers, so Docker must be running.
+- `./gradlew bootJar`: package the application as `build/libs/app.jar`.
+- `./gradlew test --tests '*CustomerApiIntegrationTest'`: run a focused API integration check while developing.
+
+Extend the `web`, `service`, `domain`, and `repository` packages under your chosen
+Java package in `src/main/java`. Add database changes as new versioned SQL files in
+`src/main/resources/db/migration`; keep migrations that have already been applied
+unchanged. Keep configuration in `src/main/resources/application.yaml`, with
+credentials supplied through the environment. Add API and persistence coverage
+under `src/test/java`, using the existing customer tests as examples.
+
+## Disposable smoke checks
+
+Run one of these checks from a disposable generated copy, with no development
+application running:
+
+- `./scripts/dev-smoke-test.sh`: start `bootRun`, check health and the seeded API, then stop it.
+- `./scripts/smoke-test.sh`: build and start the packaged container, then check health and the seeded API.
+
+Both scripts run Compose `down -v` before and after the check, removing containers
+and database volumes. They are not the everyday development startup command and
+can delete existing local data for this Compose project.
 
 ## Local container workflow
 
+To run the application and PostgreSQL entirely in containers, use this alternative
+to `bootRun`. Create `.env` as above if this is a fresh copy. Switching Compose
+configurations can recreate the database container; use a separate generated copy
+if you need to preserve your `bootRun` database.
+
 ```bash
-cp .env.example .env
 docker compose -f docker-compose.yml --env-file .env up --build
 ```
 
-Default ports:
-- app host: `__APP_PORT__`
-- management host: `__MANAGEMENT_PORT__`
-- PostgreSQL export: `5432`
-
-Override `APP_HOST_PORT`, `MANAGEMENT_HOST_PORT`, or `POSTGRES_EXPORT_PORT` in `.env` if those ports are already in use locally.
+Press Ctrl-C to stop the containers and keep local data. Restart with the same
+command. Default host ports are `8080` for the app, `8081` for management, and
+`5432` for PostgreSQL. Override `APP_HOST_PORT`, `MANAGEMENT_HOST_PORT`, or
+`POSTGRES_EXPORT_PORT` in `.env` if those ports are already in use locally.
 
 ## HTTP API
 - `GET /api/v1/customers`
@@ -112,6 +178,13 @@ helm upgrade --install __ARTIFACT_ID__ deploy/helm/spring-service-starter \
 
 Service-specific deployment values live under `deploy/helm/`.
 Optional hardening values include service-account controls, pod annotations, pod/container security contexts, node scheduling hints, and a pod disruption budget.
+
+## Starter updates
+
+[STARTER.md](STARTER.md) records this scaffold's origin and original generation
+options. Follow the [manual upgrade guide](https://github.com/dtkmn/spring-boot-playground/blob/main/docs/adoption/upgrading-generated-services.md)
+to adopt newer starter changes while preserving application code. Dependency
+updates do not synchronize copied code, workflows, scripts, or Helm assets.
 
 ## Release workflow
 
