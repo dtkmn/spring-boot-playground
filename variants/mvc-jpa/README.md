@@ -2,7 +2,7 @@
 
 This is the default starter variant.
 
-Use it for the majority of internal Spring services that do not need reactive end-to-end processing.
+Use it for the majority of Spring services that do not need reactive end-to-end processing.
 
 Generated services from this variant include:
 - Spring MVC + Spring Data JPA baseline

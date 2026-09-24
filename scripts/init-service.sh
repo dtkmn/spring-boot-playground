@@ -112,6 +112,7 @@ tar -C "$template_dir" \
   -cf - . | tar -C "$output_dir" -xf -
 cp "$repo_root/gradlew" "$output_dir/"
 cp "$repo_root/gradlew.bat" "$output_dir/"
+cp "$repo_root/LICENSE" "$output_dir/"
 mkdir -p "$output_dir/gradle"
 cp -R "$repo_root/gradle/wrapper" "$output_dir/gradle/"
 
@@ -126,22 +127,22 @@ while IFS= read -r -d '' dir; do
   mv "$dir" "$target_dir"
 done < <(find "$output_dir" -depth -type d -name '__PACKAGE_PATH__' -print0)
 
-replace_tokens() {
-  local file="$1"
-  perl -0pi -e 's/__SERVICE_NAME__/$ENV{SERVICE_NAME}/g; s/__GROUP_ID__/$ENV{GROUP_ID}/g; s/__ARTIFACT_ID__/$ENV{ARTIFACT_ID}/g; s/__PACKAGE_NAME__/$ENV{PACKAGE_NAME}/g; s/__APP_PORT__/$ENV{APP_PORT}/g; s/__MANAGEMENT_PORT__/$ENV{MANAGEMENT_PORT}/g;' "$file"
-}
-
-export SERVICE_NAME="$service_name"
-export GROUP_ID="$group_id"
-export ARTIFACT_ID="$artifact_id"
-export PACKAGE_NAME="$package_name"
-export APP_PORT="$app_port"
-export MANAGEMENT_PORT="$management_port"
-
 while IFS= read -r -d '' file; do
-  # Placeholder bytes in binary assets are data, not template instructions.
-  if perl -e 'exit(-T $ARGV[0] ? 0 : 1)' "$file"; then
-    replace_tokens "$file"
+  # An empty delimiter reads to EOF, preserving trailing newlines. Success
+  # means a NUL byte was found: leave that binary asset untouched.
+  if IFS= read -r -d '' content < "$file"; then
+    continue
+  fi
+  original_content=$content
+  # Quoted replacements keep characters such as & and backslashes literal.
+  content=${content//__SERVICE_NAME__/"$service_name"}
+  content=${content//__GROUP_ID__/"$group_id"}
+  content=${content//__ARTIFACT_ID__/"$artifact_id"}
+  content=${content//__PACKAGE_NAME__/"$package_name"}
+  content=${content//__APP_PORT__/"$app_port"}
+  content=${content//__MANAGEMENT_PORT__/"$management_port"}
+  if [[ "$content" != "$original_content" ]]; then
+    printf '%s' "$content" > "$file"
   fi
 done < <(find "$output_dir" -type f -print0)
 
