@@ -1,5 +1,5 @@
 name: Pilot Feedback
-description: Capture findings from an internal service pilot using the starter
+description: Capture findings from a service pilot using the starter
 title: "[Pilot] <team or service name>"
 body:
   - type: input

@@ -1,6 +1,7 @@
 # Spring Service Starter
 
-`spring-boot-playground` now acts as the repository for the Spring service starter program.
+`spring-boot-playground` is a practical, public starter for Spring services, with
+MVC/JPA as the default and WebFlux/R2DBC for reactive workloads.
 
 ## Release Scope
 
@@ -42,16 +43,54 @@ The default starter contract does not include:
 
 ## Start A New Service
 
-Generate a new service from the default variant:
+Prerequisites: Git, a Java 21 JDK, a running Docker engine with Docker Compose v2,
+and Bash with standard Unix tools (`tar`, `find`, and `curl`). Use macOS, Linux,
+or WSL2.
+The generated Gradle wrapper downloads Gradle; no separate Gradle installation is
+needed. The first run also downloads dependencies and container images.
+
+Start from the stabilized `main` branch in a new directory:
 
 ```bash
+git clone --branch main --depth 1 https://github.com/dtkmn/spring-boot-playground.git
+cd spring-boot-playground
 ./scripts/init-service.sh \
   --variant mvc-jpa \
   --service-name customer-profile \
   --group-id tech.company.platform \
   --artifact-id customer-profile \
   --package-name tech.company.platform.customerprofile
+cd generated/customer-profile
+cp .env.example .env
+./gradlew bootRun
 ```
+
+Keep that terminal running. Spring Boot starts PostgreSQL through `compose.yaml`
+and Flyway creates the schema and seed data. Once the application has started,
+run this request in a second terminal:
+
+```bash
+curl -fsS http://localhost:8080/api/v1/customers
+```
+
+A fresh database returns:
+
+```json
+[{"id":1,"firstName":"John","lastName":"Doe"}]
+```
+
+Press Ctrl-C in the first terminal to stop the application and its managed database.
+Restart with `./gradlew bootRun` from `generated/customer-profile`; keep the database
+container to retain local data. For build/test commands, port overrides, and where
+to extend the application, see the current
+[MVC/JPA instructions](variants/mvc-jpa/template/README.md) or
+[WebFlux/R2DBC instructions](variants/webflux-r2dbc/template/README.md).
+
+For the reactive variant, choose `--variant webflux-r2dbc` and an unused artifact
+name/output directory. The generation and first-run steps are otherwise the same.
+The `dev-smoke-test.sh` and `smoke-test.sh` scripts are optional, disposable checks:
+they remove containers and database volumes before and after running. Use a
+separate generated copy for smoke checks when you want to keep development data.
 
 Output is created under `generated/<artifact-id>` by default.
 
@@ -61,8 +100,15 @@ under `variants/*/template`. In IntelliJ IDEA, import a generated service as a
 Gradle project. Linking a raw template can cause the IDE to generate another
 wrapper inside it.
 
-Generated services now include:
+To pin a release, replace `--branch main` with a tag such as `--branch v1.0.0`.
+That older release still requires Perl for generation and predates bundled license
+files; copy [LICENSE](LICENSE) into services generated from it to retain the
+starter's copyright and permission notice. Generation from this checkout includes
+the assets below.
+
+Generated services include:
 - application code for the selected variant
+- the starter's MIT license and copyright notice
 - `.dockerignore` and `.gitignore`
 - `gradlew`, `gradlew.bat`, and `gradle/wrapper`
 - a starter CI workflow under `.github/workflows/ci.yml`
@@ -147,7 +193,7 @@ Default deployment assumptions:
 - `RELEASING.md`: release process and stabilization rules
 - `CONTRIBUTING.md`: contribution and review rules
 - `docs/adoption/pilot-playbook.md`: pilot execution and evidence rules
-- `docs/adoption/promotion-brief.md`: internal promotion stance and adoption gates
+- `docs/adoption/promotion-brief.md`: adoption guidance and validation boundaries
 - `docs/releases/release-readiness-checklist.md`: `v1.0.0` readiness gates
 - `docs/releases/version-policy.md`: Java, Spring Boot, Gradle, and migration policy
 - `docs/security/supply-chain-baseline.md`: SBOM, Dependabot, and scanner guardrails
@@ -156,3 +202,12 @@ Default deployment assumptions:
 ## Root Repository Behavior
 
 The repository root is no longer a runnable Spring application. Runtime code lives under `variants/` and `examples/`. This keeps the root of the repository focused on starter assets, governance, and validation.
+
+## License
+
+The starter's original code, documentation, and templates are available under the
+[MIT License](LICENSE). The generator in this checkout includes a copy of this
+license for the copied scaffold. You may use and modify it in public, private, or
+commercial applications; retain the copyright and permission notice when distributing copies
+or substantial portions. Third-party components, including the Gradle wrapper,
+retain their own licenses and notices.

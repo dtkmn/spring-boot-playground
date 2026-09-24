@@ -35,6 +35,8 @@ References:
 
 ## Stable Line
 
+Maintenance targets the latest stable starter release. Older tags are snapshots, with no routine backports or maintained historical branches; exceptions require an explicit maintainer decision. See [Support Policy](../../SUPPORT.md) for scope and downstream ownership.
+
 The stable line is Java 21 and Spring Boot 4.1.1. It remains stable only while:
 
 - generated `mvc-jpa` and `webflux-r2dbc` services compile and test cleanly
@@ -56,4 +58,5 @@ The Java 25 migration should be treated as a product decision, not a dependency 
 - Generated services must keep Dependabot enabled for Gradle, GitHub Actions, and Docker.
 - Generated services must produce a CycloneDX SBOM during CI.
 - Dependency updates that affect the starter contract require generated output validation, not just root repository validation.
-- Security fixes may bypass the quarterly cadence, but they still need generated starter validation before release.
+- Plan broader dependency and platform refreshes quarterly; compatible patch updates should not wait for that cycle.
+- Prioritize security fixes and critical regressions promptly, with generated starter validation before release.
