@@ -2,9 +2,9 @@
 
 ## Status
 
-This repository should be promoted as an internal starter candidate, not as a finished platform product.
+The starter is being prepared for v1.0. Both variants have passed generated-service trials covering tests, Docker Compose, Kubernetes deployment, API behavior, and persistence after restart.
 
-That distinction matters. A starter candidate is good enough for controlled adoption with feedback loops. A platform product must already have proven support load, upgrade paths, security posture, and production evidence. This repo is not there yet.
+These checks establish a working baseline. Each adopting service still needs its own production configuration and operational review.
 
 ## Positioning
 
@@ -19,20 +19,15 @@ Use this starter when a team needs a conventional Spring service with:
 - Helm deployment scaffolding
 - CI, image publishing, Dependabot, SBOM, and release docs
 
-Do not sell it as:
+Service-specific responsibilities include:
 
-- a complete platform
-- an authorization framework
-- an eventing framework
-- a service mesh strategy
-- a Java runtime migration solution
-- a domain architecture template
+- authentication and authorization
+- domain architecture and optional integrations
+- production infrastructure and operations
 
 ## Promotion Message
 
-The honest pitch:
-
-> This starter gives teams a repeatable Spring Boot 4.1 service baseline with working local development, tests, container packaging, Helm scaffolding, and release hygiene. It is ready for pilot services. Wider adoption depends on pilot evidence and a later Java 25 modernization tranche.
+> This starter provides a repeatable Spring Boot 4.1 and Java 21 service baseline with local development, tests, container packaging, Helm scaffolding, and release workflows. Choose MVC/JPA by default or WebFlux/R2DBC for a reactive service, then add your domain features.
 
 ## Adoption Rules
 
@@ -40,41 +35,26 @@ The honest pitch:
 - `webflux-r2dbc` requires an explicit reactive requirement.
 - Examples are recipes, not starter contract.
 - Teams may add Kafka, websocket ingestion, or other integrations after generation, but those choices must not move into the default starter without adoption evidence.
-- Generated services should be committed to their own repositories without structural rewrites during the pilot. If every team rewrites the scaffold immediately, the starter has failed.
+- A generated service can be evaluated locally before creating a separate repository. Record changes needed for adoption so recurring gaps can be fixed in the starter.
 
-## Promotion Gates
+## Validation Before Release
 
-Before this becomes the default starter for more than pilot teams:
+Follow the [release readiness checklist](../releases/release-readiness-checklist.md). In particular:
 
-1. Two generated pilot services must reach a real deployment environment.
-2. Pilot teams must report setup time, changes made after generation, and missing defaults.
-3. Generated `mvc-jpa` and `webflux-r2dbc` services must pass `check`, Docker Compose validation, smoke tests, and Helm rendering in CI.
-4. Generated services must publish SBOM artifacts through the CI workflow.
-5. Container images must use the digest-pinned, non-root distroless runtime by default, with any exception documented and tested.
-6. Java 25 must produce at least one green generated service before the Java baseline changes.
-7. Security posture must be explicit: either a starter security baseline is added or the repo documents why service-level auth remains outside the starter contract.
+1. Both generated variants pass `check`, Docker Compose validation, smoke tests, and Helm rendering in CI.
+2. Generated services produce coverage and SBOM artifacts through CI.
+3. Container images use the digest-pinned, non-root distroless runtime, with any exception documented and tested.
+4. Validation findings and known dependency advisories are reviewed before release.
 
-## Evidence Contract
+## Adoption Feedback
 
-Promotion evidence must be visible to the team reviewing the release: pilot feedback links, generated service repositories, CI runs, deployment notes, and documented exceptions. Do not cite local paths, private issue numbers, or implied tribal knowledge as proof.
+Use the [pilot playbook](pilot-playbook.md) for a local generated-service trial or an adopting service. Summarize results and accepted limitations in the release or pilot tracker; detailed logs may remain private.
 
-## Kill Criteria
+Revisit the defaults when adoption reveals:
 
-Stop promoting this starter if:
+- repeated structural rewrites after generation
+- excessive setup time or manual CI fixes
+- deployment failures in the intended environment
+- optional integrations displacing the simple default path
 
-- pilot teams remove most of the generated structure
-- local setup takes more than one hour for a typical service
-- generated services require manual CI surgery
-- the Helm chart cannot deploy unchanged to the target cluster baseline
-- the default path becomes a dumping ground for optional integrations
-- version drift is handled by drive-by dependency bumps instead of the version policy
-
-## Next-Level Work
-
-Priority order:
-
-1. Finish pilot adoption and collect evidence.
-2. Add an explicit security/auth stance.
-3. Run the Java 25 modernization tranche when pilot evidence supports it.
-4. Add OpenAPI generation once the API shape is stable.
-5. Add stricter code quality gates after pilot feedback confirms they will not create busywork.
+Java 25 and additional integrations are future work, independent of v1.0 readiness. Baseline changes follow the [version policy](../releases/version-policy.md).

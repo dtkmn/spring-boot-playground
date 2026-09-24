@@ -2,11 +2,11 @@
 
 `spring-boot-playground` now acts as the repository for the Spring service starter program.
 
-## Promotion Status
+## Release Scope
 
-This repo is an internal starter candidate. It is ready for controlled pilot adoption, not broad platform-product rollout.
+This repository provides a reusable Spring service starter. The v1.0 scope covers service generation, local development, container packaging, and Kubernetes deployment.
 
-Use `docs/adoption/promotion-brief.md` as the adoption pitch and `docs/releases/version-policy.md` as the dependency baseline. The current stable line is Java 21 plus Spring Boot 4.1.1.
+Both variants have been validated as generated services with PostgreSQL, Docker Compose, and local Kubernetes. See [adoption guidance](docs/adoption/promotion-brief.md) and the [version policy](docs/releases/version-policy.md). The current baseline is Java 21 plus Spring Boot 4.1.1.
 
 The default path is `mvc-jpa`. `webflux-r2dbc` remains the supported advanced variant for teams with a real reactive requirement. Optional integrations live under `examples/` and are intentionally outside the starter contract.
 

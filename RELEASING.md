@@ -28,11 +28,12 @@ This document defines how the starter repository is stabilized and released.
    - move finished work out of `Unreleased`
    - add a dated release heading
    - keep entries concise and user-visible
+   - leave an empty `Unreleased` section for subsequent changes
 7. Open and merge a reviewed pull request from `dev` to `main`.
 8. Verify `main` is green after merge.
 9. Create an annotated tag on the `main` commit using `v<major>.<minor>.<patch>`.
-10. Push the tag and create GitHub release notes from the changelog summary.
-11. Start a fresh `Unreleased` section for follow-up work.
+10. Push the tag and create GitHub release notes from the changelog summary, including known limitations and a link to the follow-up backlog.
+11. Close the release tracker only after the tag, GitHub release, and follow-up backlog are available.
 
 ## Publish Policy
 

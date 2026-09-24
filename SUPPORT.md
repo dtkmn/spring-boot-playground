@@ -2,9 +2,9 @@
 
 ## Audience
 
-This starter is optimized for internal engineering teams and is currently an internal starter candidate.
+This starter supports developers and teams building Spring services. Its supported scope covers the generator, starter variants, local development assets, and shared Helm chart.
 
-Wider rollout requires the adoption gates in `docs/adoption/promotion-brief.md`.
+Both variants are validated using generated services with PostgreSQL, Docker Compose, and local Kubernetes. See [adoption guidance](docs/adoption/promotion-brief.md) for checks in a service's target environment.
 
 ## Update Cadence
 
@@ -31,6 +31,8 @@ See `docs/releases/version-policy.md` for baseline and migration rules.
 - `mvc-jpa`: primary supported path
 - `webflux-r2dbc`: supported advanced variant
 - `examples/`: reference only, best-effort support
+
+Consuming applications own their authentication, authorization, secrets, and production configuration.
 
 ## Supply Chain Baseline
 

@@ -4,21 +4,15 @@
 
 Use this checklist before creating a release tag from `main`.
 
-If the release is tracked in GitHub, use a milestone, project item, or release tracking issue. Do not hard-code local issue numbers into this document. A checklist that only works in one maintainer's repository view is not release governance; it is private bookkeeping.
-
-## Blunt Usability Check
-
-The previous checklist was too close to theater. It named good intentions, but it depended on phantom issue references and did not show a maintainer how to prove the gates passed.
-
-This checklist is usable only when every checked item has evidence: a CI run, command output, release review link, pilot feedback link, or a documented exception with an owner and follow-up. If those artifacts do not exist, the release is not ready.
+Record the release decision and validation summary in a release tracking issue, milestone, or project item. Use CI runs and trial results as evidence; detailed local logs may remain private.
 
 ## Entry Criteria
 
-- The planned release scope is written in `CHANGELOG.md` under `Unreleased`.
-- Pilot evidence exists in linked `Pilot Feedback` issues, a release milestone, or another team-visible tracker.
-- `dev` is green in both repository validation and starter validation workflows.
+- `CHANGELOG.md` describes the planned release scope.
+- Both variants have accepted generated-service trial results, from local validation or service adoption.
+- Repository Validation, Starter Validation, and CodeQL are green on `dev`.
 - `main` is reserved for stabilized release promotions only.
-- Any release-blocking pilot findings have either been fixed or explicitly deferred with an owner.
+- Blocking findings are fixed; accepted limitations and known dependency advisories are recorded with their scope and follow-up.
 
 ## Readiness Gates
 
@@ -27,7 +21,7 @@ This checklist is usable only when every checked item has evidence: a CI run, co
 - `mvc-jpa` is still the documented default path in `README.md`, `variants/README.md`, and `docs/adoption/promotion-brief.md`.
 - `webflux-r2dbc` is still explicitly marked as the advanced variant.
 - Optional integrations remain isolated under `examples/` and are not presented as starter defaults.
-- Pilot feedback does not show teams rewriting the generated structure immediately after generation.
+- Generated-service trials show no unresolved blocker in setup, API behavior, deployment, or persistence after restart.
 
 ### Quality
 
@@ -37,11 +31,19 @@ This checklist is usable only when every checked item has evidence: a CI run, co
 ./.github/scripts/validate-repository.sh
 ```
 
-- Starter builds pass locally or in CI:
+- Starter builds pass locally or in CI. Generate fresh services first; raw templates contain placeholders. Run from the repository root, using output directories that do not already exist:
 
 ```bash
-./gradlew -p variants/mvc-jpa/template check --no-daemon
-./gradlew -p variants/webflux-r2dbc/template check --no-daemon
+for variant in mvc-jpa webflux-r2dbc; do
+  artifact="release-check-$variant"
+  ./scripts/init-service.sh \
+    --variant "$variant" \
+    --service-name "$artifact" \
+    --group-id tech.example \
+    --artifact-id "$artifact" \
+    --package-name tech.example.releasecheck || exit 1
+  ./gradlew -p "generated/$artifact" check --no-daemon || exit 1
+done
 ```
 
 - The `Starter Validation` workflow passes for both `mvc-jpa` and `webflux-r2dbc`.
@@ -58,13 +60,14 @@ This checklist is usable only when every checked item has evidence: a CI run, co
 - `docs/releases/version-policy.md` reflects the current Java, Spring Boot, and Gradle baselines.
 - `docs/security/supply-chain-baseline.md` reflects current generated-service supply-chain gates.
 - The publish contract remains tag-gated for generated services.
+- Known advisories and other deferred findings have an explicit maintainer acceptance and follow-up; green CI does not imply that no advisories remain.
 - No release or promotion doc contains maintainer-local absolute paths.
 
 ## Release Steps
 
-1. Promote the release candidate from `dev` to `main`.
-2. Verify validation workflows on `main`.
-3. Update `CHANGELOG.md` with a dated release section.
+1. Add the dated release section to `CHANGELOG.md` on `dev`, retaining `Unreleased` for future changes, and confirm the preparation commit passes CI.
+2. Promote the release candidate from `dev` to `main` through a reviewed pull request.
+3. Verify Repository Validation, Starter Validation, and CodeQL on the merged `main` commit.
 4. Create and push the annotated tag from the `main` commit:
 
 ```bash

@@ -6,6 +6,10 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-24
+
+First versioned release of the Spring service starter, with MVC/JPA as the default and WebFlux/R2DBC as the advanced variant.
+
 ### Added
 - Formal release process and stabilization rules for the starter repository
 - Pilot playbook, pilot feedback template, and release readiness checklist
@@ -27,6 +31,8 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - Replace starter and example Alpine runtimes with a digest-pinned, non-root distroless Java image
 
 ### Fixed
+- Set up Docker Buildx before publishing generated service images so GitHub Actions build caching has a compatible builder
+- Keep local build output, caches, IDE files, and `.env` out of generated services, and preserve binary assets during placeholder replacement
 - Complete Kafka Streams startup on Boot 4 with Jackson 3 and Boot-managed Kafka dependencies, and add context and trade-aggregation regression tests
 - Analyze each Gradle project separately with CodeQL to avoid failed root dependency discovery and duplicate template class exclusions
 - Restore Spring Boot 4 tracing auto-configuration and log correlation in both starter variants, with documented opt-in OTLP export and no collector required by default

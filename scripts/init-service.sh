@@ -103,7 +103,13 @@ if [[ -e "$output_dir" ]]; then
 fi
 
 mkdir -p "$output_dir"
-cp -R "$template_dir/." "$output_dir"
+# Raw templates may have been opened in an IDE or built locally. Do not carry
+# their caches, compiled classes, credentials, or workspace metadata forward.
+tar -C "$template_dir" \
+  --exclude='.gradle' --exclude='build' --exclude='out' \
+  --exclude='.idea' --exclude='*.iml' --exclude='.git' \
+  --exclude='.env' --exclude='.DS_Store' --exclude='*.log' \
+  -cf - . | tar -C "$output_dir" -xf -
 cp "$repo_root/gradlew" "$output_dir/"
 cp "$repo_root/gradlew.bat" "$output_dir/"
 mkdir -p "$output_dir/gradle"
@@ -133,7 +139,10 @@ export APP_PORT="$app_port"
 export MANAGEMENT_PORT="$management_port"
 
 while IFS= read -r -d '' file; do
-  replace_tokens "$file"
+  # Placeholder bytes in binary assets are data, not template instructions.
+  if perl -e 'exit(-T $ARGV[0] ? 0 : 1)' "$file"; then
+    replace_tokens "$file"
+  fi
 done < <(find "$output_dir" -type f -print0)
 
 echo "Generated $variant starter at $output_dir"
