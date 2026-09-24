@@ -55,6 +55,12 @@ Generate a new service from the default variant:
 
 Output is created under `generated/<artifact-id>` by default.
 
+The raw templates use the repository's shared Gradle wrapper. The generator
+copies that wrapper into each generated service; do not add separate wrappers
+under `variants/*/template`. In IntelliJ IDEA, import a generated service as a
+Gradle project. Linking a raw template can cause the IDE to generate another
+wrapper inside it.
+
 Generated services now include:
 - application code for the selected variant
 - `.dockerignore` and `.gitignore`
@@ -144,6 +150,7 @@ Default deployment assumptions:
 - `docs/adoption/promotion-brief.md`: internal promotion stance and adoption gates
 - `docs/releases/release-readiness-checklist.md`: `v1.0.0` readiness gates
 - `docs/releases/version-policy.md`: Java, Spring Boot, Gradle, and migration policy
+- [Spring Boot 4 migration notes](docs/migrations/spring-boot-4.md): dependency, code, configuration, and verification changes
 - `docs/security/supply-chain-baseline.md`: SBOM, Dependabot, and scanner guardrails
 - `docs/adr`: architectural decisions
 

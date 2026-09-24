@@ -8,7 +8,6 @@ import org.apache.kafka.streams.kstream.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 import org.springframework.kafka.support.serializer.JacksonJsonSerde;
 import org.springframework.stereotype.Service;
 import tech.dtkmn.examples.kafkastreams.entity.TradeAggregate;
@@ -17,8 +16,6 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class TradeStreamProcessingService {
@@ -35,11 +32,6 @@ public class TradeStreamProcessingService {
 
         // Instantiate the Serde for TradeAggregate
         Serde<TradeAggregate> tradeAggregateSerde = new JacksonJsonSerde<>(TradeAggregate.class, jsonMapper);
-
-        // Configure the Serde
-        Map<String, Object> serdeConfigs = new HashMap<>();
-        serdeConfigs.put(JacksonJsonDeserializer.TRUSTED_PACKAGES, "*");
-        tradeAggregateSerde.configure(serdeConfigs, false);
 
         KStream<String, String> sourceStream = builder.stream("crypto-prices");
         sourceStream.groupByKey(Grouped.with(Serdes.String(), Serdes.String()))
