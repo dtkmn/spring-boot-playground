@@ -11,6 +11,13 @@ on:
     branches: ["main", "dev"]
 
 jobs:
+  generator-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check generator selection and omission contracts
+        run: ./.github/scripts/test-generator.sh
+
   generate-and-test:
     runs-on: ubuntu-latest
     strategy:
@@ -18,17 +25,26 @@ jobs:
       matrix:
         include:
           - variant: mvc-jpa
+            purpose: api
             artifact: demo-mvc-jpa
             package_name: tech.company.platform.demomvcjpa
             app_port: 18080
             management_port: 18081
             postgres_port: 15432
           - variant: webflux-r2dbc
+            purpose: api
             artifact: demo-webflux-r2dbc
             package_name: tech.company.platform.demowebflux
             app_port: 28080
             management_port: 28081
             postgres_port: 25432
+          - variant: mvc-jpa
+            purpose: ai
+            artifact: demo-mvc-ai
+            package_name: tech.company.platform.demomvcai
+            app_port: 38080
+            management_port: 38081
+            postgres_port: 35432
     steps:
       - uses: actions/checkout@v7
 
@@ -45,24 +61,35 @@ jobs:
         run: |
           ./scripts/init-service.sh \
             --variant "${{ matrix.variant }}" \
+            --purpose "${{ matrix.purpose }}" \
             --service-name "${{ matrix.artifact }}" \
             --group-id tech.company.platform \
             --artifact-id "${{ matrix.artifact }}" \
-            --package-name "${{ matrix.package_name }}"
+            --package-name "${{ matrix.package_name }}" \
+            --app-port "${{ matrix.app_port }}" \
+            --management-port "${{ matrix.management_port }}"
 
       - name: Check generated starter
         run: ./gradlew -p "generated/${{ matrix.artifact }}" check --no-daemon
 
       - name: Validate generated Docker Compose
         run: |
+          umask 077
           cp "generated/${{ matrix.artifact }}/.env.example" "generated/${{ matrix.artifact }}/.env"
           {
             echo "APP_HOST_PORT=${{ matrix.app_port }}"
             echo "MANAGEMENT_HOST_PORT=${{ matrix.management_port }}"
             echo "POSTGRES_EXPORT_PORT=${{ matrix.postgres_port }}"
+            printf 'POSTGRES_PASSWORD=%s\n' "$(openssl rand -hex 32)"
           } >> "generated/${{ matrix.artifact }}/.env"
-          docker compose -f "generated/${{ matrix.artifact }}/compose.yaml" --env-file "generated/${{ matrix.artifact }}/.env" config
-          docker compose -f "generated/${{ matrix.artifact }}/docker-compose.yml" --env-file "generated/${{ matrix.artifact }}/.env" config
+          if [[ "${{ matrix.purpose }}" == ai ]]; then
+            {
+              printf 'PILOT_CALLER_A_TOKEN=%s\n' "$(openssl rand -hex 32)"
+              printf 'PILOT_CALLER_B_TOKEN=%s\n' "$(openssl rand -hex 32)"
+            } >> "generated/${{ matrix.artifact }}/.env"
+          fi
+          docker compose -f "generated/${{ matrix.artifact }}/compose.yaml" --env-file "generated/${{ matrix.artifact }}/.env" config --quiet
+          docker compose -f "generated/${{ matrix.artifact }}/docker-compose.yml" --env-file "generated/${{ matrix.artifact }}/.env" config --quiet
 
       - name: Check generated starter assets
         run: |
@@ -70,6 +97,9 @@ jobs:
           grep -Fxq -- "- Source commit: $(git rev-parse HEAD)" "generated/${{ matrix.artifact }}/STARTER.md"
           grep -Fxq -- "- Working tree: clean" "generated/${{ matrix.artifact }}/STARTER.md"
           grep -Fxq -- "- Variant: ${{ matrix.variant }}" "generated/${{ matrix.artifact }}/STARTER.md"
+          grep -Fxq -- "- Generation contract: 2" "generated/${{ matrix.artifact }}/STARTER.md"
+          grep -Fxq -- "- Purpose: ${{ matrix.purpose }}" "generated/${{ matrix.artifact }}/STARTER.md"
+          grep -Fxq -- "- MCP: off" "generated/${{ matrix.artifact }}/STARTER.md"
           test -f "generated/${{ matrix.artifact }}/.dockerignore"
           test -f "generated/${{ matrix.artifact }}/.gitignore"
           test -f "generated/${{ matrix.artifact }}/gradlew"
@@ -83,8 +113,19 @@ jobs:
           test -f "generated/${{ matrix.artifact }}/SUPPORT.md"
           test -f "generated/${{ matrix.artifact }}/CHANGELOG.md"
           test -f "generated/${{ matrix.artifact }}/RELEASING.md"
-          test -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml"
-          test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
+          if [[ "${{ matrix.purpose }}" == api ]]; then
+            grep -Fxq -- "- Model integration: none" "generated/${{ matrix.artifact }}/STARTER.md"
+            test -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml"
+            test -d "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
+            test ! -e "generated/${{ matrix.artifact }}/gradle/ai.gradle"
+            test ! -e "generated/${{ matrix.artifact }}/src/main/resources/application-ai.yaml"
+          else
+            grep -Fxq -- "- Model integration: ollama" "generated/${{ matrix.artifact }}/STARTER.md"
+            test -f "generated/${{ matrix.artifact }}/gradle/ai.gradle"
+            test -f "generated/${{ matrix.artifact }}/src/main/resources/application-ai.yaml"
+            test ! -e "generated/${{ matrix.artifact }}/deploy/helm"
+            test -z "$(find "generated/${{ matrix.artifact }}/src" -type f -name '*Customer*' -print -quit)"
+          fi
           test -f "generated/${{ matrix.artifact }}/scripts/dev-smoke-test.sh"
           test -f "generated/${{ matrix.artifact }}/scripts/smoke-test.sh"
           test -d "generated/${{ matrix.artifact }}/build/reports/cyclonedx"
@@ -94,7 +135,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: generated-${{ matrix.variant }}-quality-reports
+          name: generated-${{ matrix.variant }}-${{ matrix.purpose }}-quality-reports
           path: |
             generated/${{ matrix.artifact }}/build/reports/tests/
             generated/${{ matrix.artifact }}/build/reports/jacoco/
@@ -110,10 +151,16 @@ jobs:
           cd "generated/${{ matrix.artifact }}"
           ./scripts/smoke-test.sh
 
+      - name: Set up Helm for generated API starter
+        if: matrix.purpose == 'api'
+        uses: azure/setup-helm@v5
+
       - name: Helm lint generated starter chart
+        if: matrix.purpose == 'api'
         run: helm lint "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter"
 
       - name: Helm template generated starter chart
+        if: matrix.purpose == 'api'
         run: |
           helm template "${{ matrix.artifact }}" "generated/${{ matrix.artifact }}/deploy/helm/spring-service-starter" \
             -f "generated/${{ matrix.artifact }}/deploy/helm/values-dev.yaml" \

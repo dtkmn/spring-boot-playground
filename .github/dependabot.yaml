@@ -24,6 +24,10 @@ updates:
     directory: "/examples/binance-websocket"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "gradle"
+    directory: "/examples/ai-mcp"
+    schedule:
+      interval: "weekly"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -46,5 +50,9 @@ updates:
       interval: "weekly"
   - package-ecosystem: "docker"
     directory: "/examples/binance-websocket"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/examples/ai-mcp"
     schedule:
       interval: "weekly"

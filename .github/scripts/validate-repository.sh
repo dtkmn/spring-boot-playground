@@ -21,6 +21,15 @@ required_paths=(
   "variants/mvc-jpa/template/deploy/helm/values-dev.yaml"
   "variants/mvc-jpa/template/deploy/helm/values-staging.yaml"
   "variants/mvc-jpa/template/deploy/helm/values-prod.yaml"
+  "variants/mvc-jpa/ai/gradle/ai.gradle"
+  "variants/mvc-jpa/ai/src/main/resources/application-ai.yaml"
+  "variants/mvc-jpa/ai/compose.yaml"
+  "variants/mvc-jpa/ai/docker-compose.yml"
+  "variants/mvc-jpa/ai/README.md"
+  "variants/mvc-jpa/ai/.github/workflows/ci.yml"
+  "variants/mvc-jpa/ai/.github/workflows/publish.yml"
+  "variants/mvc-jpa/ai/scripts/dev-smoke-test.sh"
+  "variants/mvc-jpa/ai/scripts/smoke-test.sh"
   "variants/webflux-r2dbc"
   "variants/webflux-r2dbc/template/.gitignore"
   "variants/webflux-r2dbc/template/.dockerignore"
@@ -40,6 +49,7 @@ required_paths=(
   "examples/kafka-basic"
   "examples/kafka-streams"
   "examples/binance-websocket"
+  "examples/ai-mcp"
   "deploy/helm/spring-service-starter"
   "deploy/helm/spring-service-starter/values.schema.json"
   ".github/ISSUE_TEMPLATE/pilot-feedback.yml"
@@ -54,6 +64,7 @@ required_paths=(
   "docs/security/supply-chain-baseline.md"
   "RELEASING.md"
   "scripts/init-service.sh"
+  ".github/scripts/test-generator.sh"
 )
 
 failures=0

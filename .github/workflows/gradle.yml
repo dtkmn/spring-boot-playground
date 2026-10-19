@@ -23,8 +23,10 @@ jobs:
           - examples/kafka-basic
           - examples/kafka-streams
           - examples/binance-websocket
+          - examples/ai-mcp
           - variants/mvc-jpa/template
           - variants/webflux-r2dbc/template
+          - variants/mvc-jpa/ai
     steps:
       - uses: actions/checkout@v7
 
@@ -42,7 +44,18 @@ jobs:
           dependency-graph-include-configurations: runtimeClasspath
 
       - name: Resolve runtime dependencies
-        run: ./gradlew -p "${{ matrix.project }}" dependencies --configuration runtimeClasspath --no-daemon
+        env:
+          PROJECT_DIR: ${{ matrix.project }}
+        run: |
+          if [[ "$PROJECT_DIR" == variants/mvc-jpa/ai ]]; then
+            ./scripts/init-service.sh \
+              --variant mvc-jpa --purpose ai \
+              --service-name dependency-mvc-ai --group-id tech.example \
+              --artifact-id dependency-mvc-ai --package-name tech.example.dependencymvcai \
+              --output-dir generated/dependency-mvc-ai
+            PROJECT_DIR=generated/dependency-mvc-ai
+          fi
+          ./gradlew -p "$PROJECT_DIR" dependencies --configuration runtimeClasspath --no-daemon
 
   repository-checks:
     runs-on: ubuntu-latest
@@ -62,6 +75,7 @@ jobs:
           - kafka-basic
           - kafka-streams
           - binance-websocket
+          - ai-mcp
     steps:
       - uses: actions/checkout@v7
 
