@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: ai-mcp-example
+  mvc:
+    problemdetails:
+      enabled: true
+  ai:
+    model:
+      chat: none
+      embedding: none
+    mcp:
+      server:
+        name: starter-customer-example
+        version: 0.1.0
+        protocol: STATELESS
+        type: SYNC
+        capabilities:
+          resource: false
+          prompt: false
+          completion: false
+server:
+  address: 127.0.0.1
+  port: 8087
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
