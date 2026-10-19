@@ -20,6 +20,7 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - Define latest-stable maintenance, patch cadence, and application owners' responsibility for dependencies and copied starter assets
 
 ### Fixed
+- Remove unnecessary global CSRF disabling from experimental MVC AI services, retaining Spring Security's default protection and Bearer-request exemption
 - Remove outdated PostgreSQL JDBC overrides so both variants use Spring Boot's patched 42.7.13 driver (CVE-2026-54291)
 
 ## [1.0.0] - 2026-09-24

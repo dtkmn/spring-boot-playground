@@ -56,8 +56,7 @@ public class LocalBearerSecurityConfiguration {
         resolver.setAllowUriQueryParameter(false);
 
         return http
-            // Only Authorization-header Bearer credentials are accepted; no browser cookie auth.
-            .csrf(AbstractHttpConfigurer::disable)
+            // Keep CSRF protection; resource-server defaults exempt Authorization-header Bearer requests.
             .cors(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)

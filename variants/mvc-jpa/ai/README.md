@@ -119,6 +119,8 @@ operations have short five-second bounds. There are no retries. A canceled worke
 keeps its slot until it exits; an HTTP timeout does not prove Ollama computation
 stopped. Contract/provider/database failures return generic 503, expiry returns
 504, invalid requests return 400 and invalid credentials return 401.
+CSRF protection remains enabled; Spring Security's resource-server configuration
+exempts Bearer requests, so clients do not need a separate CSRF token.
 
 ## Checks and local containers
 

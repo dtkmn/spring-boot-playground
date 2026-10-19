@@ -1,6 +1,7 @@
 package __PACKAGE_NAME__;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.servlet.Filter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalManagementPort;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -25,6 +27,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -64,6 +69,8 @@ class OrderAssistantIntegrationTest {
     @LocalManagementPort int managementPort;
     @Autowired JdbcTemplate jdbc;
     @Autowired MeterRegistry meters;
+    @Autowired WebApplicationContext applicationContext;
+    @Autowired @Qualifier("springSecurityFilterChain") Filter securityFilterChain;
 
     @BeforeEach
     void resetModel() { OLLAMA.script(request -> intent("CLARIFY")); }
@@ -263,6 +270,30 @@ class OrderAssistantIntegrationTest {
                 .timeout(Duration.ofSeconds(6)).header(header[0], header[1]).GET().build();
             assertThat(HTTP.send(request, HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(401);
         }
+        assertThat(OLLAMA.requests()).isEmpty();
+    }
+
+    @Test
+    void postsWithoutBearerCredentialsRequireCsrfAndNeverReachTheWorkflow() throws Exception {
+        LookupCounts before = lookupCounts();
+        // Inspect CSRF rejection before the server redispatches errors through authentication.
+        var mvc = MockMvcBuilders.webAppContextSetup(applicationContext).addFilters(securityFilterChain).build();
+        String endpoint = "/api/ai/order-support";
+        String body = "{\"orderId\":1002,\"question\":\"What is the order status?\"}";
+        for (var request : List.of(
+                MockMvcRequestBuilders.post(endpoint),
+                MockMvcRequestBuilders.post(endpoint).queryParam("access_token", TOKEN_A),
+                MockMvcRequestBuilders.post(endpoint).header("Cookie", "access_token=" + TOKEN_A),
+                MockMvcRequestBuilders.post(endpoint).header("Authorization", "Basic "
+                    + Base64.getEncoder().encodeToString(("caller-a:" + TOKEN_A).getBytes(StandardCharsets.UTF_8))),
+                MockMvcRequestBuilders.post(endpoint).header("X-CSRF-TOKEN", "invalid-csrf-token"))) {
+            assertThat(mvc.perform(request.contentType("application/json").content(body))
+                .andReturn().getResponse().getStatus()).isEqualTo(403);
+        }
+        var formRequest = MockMvcRequestBuilders.post(endpoint).contentType("application/x-www-form-urlencoded")
+            .formField("access_token", TOKEN_A).formField("question", "status").formField("orderId", "1002");
+        assertThat(mvc.perform(formRequest).andReturn().getResponse().getStatus()).isEqualTo(403);
+        assertLookupDelta(before, 0, 0);
         assertThat(OLLAMA.requests()).isEmpty();
     }
 
