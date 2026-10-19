@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: __ARTIFACT_ID__
+  ai:
+    model:
+      chat: none
+      embedding: none
+  docker:
+    compose:
+      file: compose.yaml
+  datasource:
+    hikari:
+      connection-timeout: 5000
+      validation-timeout: 3000
+      data-source-properties:
+        connectTimeout: 5
+        socketTimeout: 5
+        options: -c statement_timeout=5000
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:__ARTIFACT_ID__}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:__ARTIFACT_ID__}
+    user: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: ${SERVER_PORT:__APP_PORT__}
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:__MANAGEMENT_PORT__}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+      probes:
+        enabled: true
+  tracing:
+    sampling:
+      probability: ${MANAGEMENT_TRACING_SAMPLING_PROBABILITY:0.1}
+  otlp:
+    metrics:
+      export:
+        enabled: false
+
+logging:
+  level:
+    __PACKAGE_NAME__: INFO
+    org.springframework.web: INFO
+
+pilot:
+  auth:
+    caller-a-token: ${PILOT_CALLER_A_TOKEN:}
+    caller-b-token: ${PILOT_CALLER_B_TOKEN:}

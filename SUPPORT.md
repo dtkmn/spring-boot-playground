@@ -2,7 +2,7 @@
 
 ## Audience
 
-This starter supports developers and teams building Spring services. Its supported scope covers the generator, starter variants, local development assets, and shared Helm chart.
+This starter supports developers and teams building Spring services. Its maintained scope covers API generation, both API variants, local development assets, and the shared Helm chart. MVC/JPA AI generation is experimental and scoped to host and local Docker Compose use.
 
 Both variants are validated using generated services with PostgreSQL, Docker Compose, and local Kubernetes. See [adoption guidance](docs/adoption/promotion-brief.md) for checks in a service's target environment.
 
@@ -26,15 +26,23 @@ Maintenance targets the latest stable starter release. Older releases remain ava
 - Java 21
 - Spring Boot 4.1.x maintained baseline line
 - PostgreSQL as the default persistence contract
-- Kubernetes plus Helm as the supported cloud deployment path
+- Kubernetes plus Helm as the supported cloud deployment path for maintained API output
 
 See `docs/releases/version-policy.md` for baseline and migration rules.
 
 ## Support Levels
 
-- `mvc-jpa`: primary supported path
-- `webflux-r2dbc`: supported advanced variant
+- `mvc-jpa` / `--purpose api`: primary supported path
+- `webflux-r2dbc` / `--purpose api`: supported advanced variant
+- `mvc-jpa` / `--purpose ai`: experimental, best-effort host/Compose support; no Helm or production identity commitment
 - `examples/`: reference only, best-effort support
+
+The AI output uses one Ollama classification call followed by Java-owned,
+owner-scoped read-only lookups. Its two-token authentication is a local fixture.
+Model requests are opt-in; regular checks use a fake model endpoint. Other model
+choices require their own live evaluation, and passing sample questions does not
+establish general language accuracy. No response-time or model-availability
+commitment is provided.
 
 Consuming applications own their authentication, authorization, secrets, and production configuration.
 

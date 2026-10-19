@@ -31,8 +31,10 @@ jobs:
           - examples/kafka-basic
           - examples/kafka-streams
           - examples/binance-websocket
+          - examples/ai-mcp
           - variants/mvc-jpa/template
           - variants/webflux-r2dbc/template
+          - variants/mvc-jpa/ai
     steps:
       - uses: actions/checkout@v7
 
@@ -46,22 +48,63 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       # Each project gets its own database so template package names cannot collide.
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
-        with:
-          languages: java-kotlin
-          build-mode: manual
-          source-root: ${{ matrix.project }}
-
-      - name: Compile project for analysis
+      - name: Prepare composed project
+        id: project
         env:
           PROJECT_DIR: ${{ matrix.project }}
         run: |
+          if [[ "$PROJECT_DIR" == variants/mvc-jpa/ai ]]; then
+            ./scripts/init-service.sh \
+              --variant mvc-jpa --purpose ai \
+              --service-name codeql-mvc-ai --group-id tech.example \
+              --artifact-id codeql-mvc-ai --package-name tech.example.codeqlmvcai \
+              --output-dir generated/codeql-mvc-ai
+            PROJECT_DIR=generated/codeql-mvc-ai
+            cat > "$PROJECT_DIR/checked-in-sources.gradle" <<'SOURCES'
+          allprojects {
+              afterEvaluate {
+                  def starter = new File(System.getenv('STARTER_SOURCE_DIR'))
+                  tasks.named('compileJava') {
+                      setSource(files(fileTree(new File(starter, 'variants/mvc-jpa/template/src/main/java')) {
+                          include '**/Application.java'
+                      }, fileTree(new File(starter, 'variants/mvc-jpa/ai/src/main/java'))))
+                  }
+                  tasks.named('compileTestJava') {
+                      setSource(files(fileTree(new File(starter, 'variants/mvc-jpa/template/src/test/java')) {
+                          include '**/observability/**'
+                      }, fileTree(new File(starter, 'variants/mvc-jpa/ai/src/test/java'))))
+                  }
+              }
+          }
+          SOURCES
+            echo "source_root=." >> "$GITHUB_OUTPUT"
+          else
+            echo "source_root=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+          fi
+          echo "directory=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4
+        with:
+          languages: java-kotlin
+          build-mode: manual
+          source-root: ${{ steps.project.outputs.source_root }}
+
+      - name: Compile project for analysis
+        env:
+          PROJECT_DIR: ${{ steps.project.outputs.directory }}
+          STARTER_SOURCE_DIR: ${{ github.workspace }}
+        run: |
+          source_options=()
+          if [[ -f "$PROJECT_DIR/checked-in-sources.gradle" ]]; then
+            source_options=(-I "$STARTER_SOURCE_DIR/$PROJECT_DIR/checked-in-sources.gradle")
+          fi
           ./gradlew -p "$PROJECT_DIR" clean compileJava compileTestJava \
+            "${source_options[@]}" \
             --no-daemon --no-build-cache --no-configuration-cache
 
       - name: Analyze Java
-        uses: github/codeql-action/analyze@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
+        uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4
         with:
           category: /language:java-kotlin/project:${{ matrix.project }}
 

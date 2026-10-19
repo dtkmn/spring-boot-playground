@@ -12,3 +12,4 @@ Current examples:
 - `kafka-basic`: minimal HTTP producer and Kafka consumer flow
 - `kafka-streams`: stream joins, enrichment, aggregation, and alerting
 - `binance-websocket`: websocket ingestion into Kafka
+- `ai-mcp`: shared customer service exposed through REST, read-only MCP, and optional Ollama summaries

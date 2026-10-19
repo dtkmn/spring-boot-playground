@@ -1,0 +1,46 @@
+// Applied only to the experimental MVC AI output; common build and wrapper stay shared.
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.ai:spring-ai-bom:2.0.1'
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+}
+
+tasks.named('test') {
+    useJUnitPlatform { excludeTags 'ollama' }
+}
+
+// Local inference is opt-in and never downloads a model or runs in ordinary CI.
+tasks.register('ollamaTest', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    environment 'SERVER_PORT', '0'
+    environment 'MANAGEMENT_SERVER_PORT', '0'
+    useJUnitPlatform {
+        includeTags 'ollama'
+        excludeTags 'exploratory', 'heldout'
+    }
+    outputs.upToDateWhen { false }
+}
+
+tasks.register('ollamaExploreTest', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    environment 'SERVER_PORT', '0'
+    environment 'MANAGEMENT_SERVER_PORT', '0'
+    useJUnitPlatform { includeTags 'exploratory' }
+    outputs.upToDateWhen { false }
+}
+
+tasks.register('ollamaHeldoutTest', Test) {
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    environment 'SERVER_PORT', '0'
+    environment 'MANAGEMENT_SERVER_PORT', '0'
+    useJUnitPlatform { includeTags 'heldout' }
+    outputs.upToDateWhen { false }
+}

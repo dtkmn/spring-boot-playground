@@ -10,7 +10,9 @@ the changes relevant to your service.
 
 Keep the generated `STARTER.md` in the application's repository. It records the
 upstream repository, source commit, version, working-tree state, variant, and generation
-command. This is historical origin information, not the application's current
+command. Generator contract 2 also records purpose (`api` or `ai`), MCP (`off`)
+and model integration (`none` or `ollama`). Older records without those fields
+mean API purpose, MCP off and no model integration. This is historical origin information, not the application's current
 version or a claim that every later starter change has been applied.
 
 Use the recorded full commit as the old baseline. A version is recorded only when
@@ -50,8 +52,8 @@ git -C "$upgrade_dir/new-source" rev-parse HEAD
 ```
 
 Record the printed target commit for the application upgrade. Use **identical
-original generation options** for both scaffolds, including the variant, names,
-package, and both ports. Copy these values from the command in `STARTER.md`; the
+original generation options** for both scaffolds, including the variant, purpose,
+names, package, and both ports. Copy these values from the command in `STARTER.md`; the
 following values are only an example:
 
 ```bash
@@ -71,6 +73,11 @@ git diff --no-index -- "$upgrade_dir/old-service" "$upgrade_dir/new-service"
 
 Read each source checkout's prerequisites before generation. The historical
 `v1.0.0` generator uses Perl; newer generator changes do not alter that old tag.
+Use flags understood by both source checkouts. Older generators without
+`--purpose` produce API output by default, so omit that flag when comparing an
+older API scaffold. An AI scaffold needs an AI-capable baseline or its retained
+original source; comparing an old API sample with a new AI sample does not
+describe an ordinary application upgrade.
 The two output directories must be new disposable paths, never the application
 directory. `git diff --no-index` exits with `1` when it finds differences; that is
 expected. Compare individual files or subdirectories the same way to narrow the
@@ -86,6 +93,12 @@ For a wrapper update, keep `gradlew`, `gradlew.bat`, and `gradle/wrapper/` align
 Keep service-specific Helm values, credentials, and deployment settings intact.
 Never replace or replay already-applied Flyway migrations; express necessary
 database changes in new migrations appropriate to your application's schema.
+
+Changing an existing service from API to AI purpose is an intentional application
+change. Adapt the classification, authorized business lookups, identity and tests
+to the existing domain; do not overwrite it with the generated Order sample or
+its fresh-database migrations. Experimental AI output supports host/local Compose
+and does not supply a Helm deployment to replace an application's existing one.
 
 Run `./gradlew check bootJar` from the application, with Docker running for its
 integration tests. Exercise affected application behavior and add coverage where

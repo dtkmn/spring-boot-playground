@@ -7,6 +7,9 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 ## [Unreleased]
 
 ### Added
+- Experimental `--purpose ai` generation for MVC/JPA, with an opt-in Ollama classifier, owner-scoped order lookups, local authentication fixtures and host/Compose checks
+- Explicit generation selections in `STARTER.md`, including purpose, model integration and generator contract; maintained API outputs retain Helm support
+- Optional AI/MCP example with a shared customer service, a read-only MCP tool, and local Ollama summaries
 - Generated `STARTER.md` records source provenance and regeneration options, with a manual upgrade guide for existing services
 - MIT licensing for the starter and copied scaffold, with the license included in newly generated services
 
@@ -17,6 +20,7 @@ The format follows a simple keep-a-changelog style with concise user-visible ent
 - Define latest-stable maintenance, patch cadence, and application owners' responsibility for dependencies and copied starter assets
 
 ### Fixed
+- Remove unnecessary global CSRF disabling from experimental MVC AI services, retaining Spring Security's default protection and Bearer-request exemption
 - Remove outdated PostgreSQL JDBC overrides so both variants use Spring Boot's patched 42.7.13 driver (CVE-2026-54291)
 
 ## [1.0.0] - 2026-09-24

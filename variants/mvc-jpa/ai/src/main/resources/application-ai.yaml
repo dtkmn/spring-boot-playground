@@ -1,0 +1,25 @@
+spring:
+  ai:
+    model:
+      chat: ollama
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://127.0.0.1:11434}
+      init:
+        pull-model-strategy: never
+      chat:
+        model: ${OLLAMA_MODEL:qwen3.5:4b}
+        temperature: 0
+        num-ctx: 4096
+        num-predict: 256
+        think: false
+    retry:
+      max-attempts: 0
+  http:
+    clients:
+      imperative:
+        factory: jdk
+      connect-timeout: 3s
+      read-timeout: 20s
+pilot:
+  ai:
+    deadline: 60s
