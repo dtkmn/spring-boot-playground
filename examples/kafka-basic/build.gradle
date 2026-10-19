@@ -10,7 +10,6 @@ version = '0.1.0-SNAPSHOT'
 ext {
     set('jackson-bom.version', '3.1.8')
     set('tomcat.version', '11.0.26')
-    set('kafka.version', '3.9.2')
 }
 
 java {
