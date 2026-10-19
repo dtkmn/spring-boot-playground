@@ -31,6 +31,9 @@ dependencyManagement {
 
 dependencies {
     constraints {
+        implementation('at.yawk.lz4:lz4-java:1.11.4') {
+            because 'Kafka brings an LZ4 version affected by published security advisories'
+        }
         testImplementation('org.apache.commons:commons-compress:1.28.0') {
             because 'Testcontainers 1.21.x brings an older commons-compress version with published advisories'
         }
