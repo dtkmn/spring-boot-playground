@@ -26,6 +26,22 @@ This is not a full security program. It does not replace:
 
 Pretending otherwise would be sloppy. This baseline improves visibility and default posture; platform security still needs explicit ownership.
 
+## Dependency Graph and AI Updates
+
+Runtime dependency submission covers both API templates, the maintained examples,
+and the generated MVC AI composition. The AI graph is submitted as the logical
+group `mvc-jpa-ai-runtime`, without a file location: its generated build directory
+is not committed and cannot be an update target in a fresh checkout.
+
+Dependabot continues to update the committed API and example manifests. For an
+alert in the composed AI graph, update the owning source manually: the Spring AI
+BOM in `variants/mvc-jpa/ai/gradle/ai.gradle`, or the shared dependencies in
+`variants/mvc-jpa/template/build.gradle`. Generate a service with
+`--variant mvc-jpa --purpose ai`, resolve its runtime dependencies, and run its tests to verify the
+fixed version. Do not add generated services to Dependabot's configured directories.
+Submitted Gradle dependency alerts do not always support automatic security PRs;
+see the [Gradle dependency submission FAQ](https://github.com/gradle/actions/blob/main/docs/dependency-submission-faq.md#how-can-i-use-dependabot-security-updates-to-generate-a-pr-to-update-my-vulnerable-dependencies).
+
 ## Scanner Policy
 
 Repository CodeQL analysis uses a separate manual build for each Gradle project.
