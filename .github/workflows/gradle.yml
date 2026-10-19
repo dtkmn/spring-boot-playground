@@ -39,7 +39,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
-          dependency-graph: generate-and-submit
+          # The composed AI service has no committed manifest to update.
+          dependency-graph: ${{ matrix.project == 'variants/mvc-jpa/ai' && 'generate' || 'generate-and-submit' }}
           dependency-graph-continue-on-failure: false
           dependency-graph-include-configurations: runtimeClasspath
 
@@ -56,6 +57,26 @@ jobs:
             PROJECT_DIR=generated/dependency-mvc-ai
           fi
           ./gradlew -p "$PROJECT_DIR" dependencies --configuration runtimeClasspath --no-daemon
+
+      - name: Submit composed AI runtime dependency group
+        if: matrix.project == 'variants/mvc-jpa/ai'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          snapshot="$DEPENDENCY_GRAPH_REPORT_DIR/$GITHUB_DEPENDENCY_GRAPH_JOB_CORRELATOR.json"
+          prepared="$RUNNER_TEMP/mvc-jpa-ai-runtime.json"
+          # Keep the resolved graph and snapshot identity, without an uncommitted file target.
+          jq -e '
+            if (.manifests | length) != 1 or
+               ([.manifests[].file.source_location] != ["generated/dependency-mvc-ai/settings.gradle"])
+            then error("Expected the composed AI service snapshot")
+            else
+              .manifests = {"mvc-jpa-ai-runtime": (
+                .manifests[] | .name = "mvc-jpa-ai-runtime" | del(.file)
+              )}
+            end
+          ' "$snapshot" > "$prepared"
+          gh api --method POST "repos/$GITHUB_REPOSITORY/dependency-graph/snapshots" --input "$prepared"
 
   repository-checks:
     runs-on: ubuntu-latest
