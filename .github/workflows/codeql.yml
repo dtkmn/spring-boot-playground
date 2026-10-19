@@ -97,7 +97,7 @@ jobs:
         run: |
           source_options=()
           if [[ -f "$PROJECT_DIR/checked-in-sources.gradle" ]]; then
-            source_options=(-I "$PROJECT_DIR/checked-in-sources.gradle")
+            source_options=(-I "$STARTER_SOURCE_DIR/$PROJECT_DIR/checked-in-sources.gradle")
           fi
           ./gradlew -p "$PROJECT_DIR" clean compileJava compileTestJava \
             "${source_options[@]}" \
