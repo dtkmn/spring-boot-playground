@@ -6,13 +6,15 @@ default branch, and on manual dispatch.
 
 ## Analysis layout
 
-Each of the five Gradle projects has its own Java analysis job and result category:
+Each project has its own Java analysis job and result category:
 
 - `examples/kafka-basic`
 - `examples/kafka-streams`
 - `examples/binance-websocket`
+- `examples/ai-mcp`
 - `variants/mvc-jpa/template`
 - `variants/webflux-r2dbc/template`
+- `variants/mvc-jpa/ai` (a composed generated service)
 
 Each job scopes its source root to that project, initializes CodeQL in manual
 build mode, then uses Java 21 and the root Gradle wrapper to compile it with `-p`.
@@ -20,6 +22,13 @@ A clean build with build and
 configuration caches disabled ensures that CodeQL observes the compiler.
 Dependencies may still be cached. Tests are compiled for analysis; the existing
 validation workflows run them.
+
+The AI assets are an addition to the MVC scaffold, not a standalone Gradle
+project. Its job generates an independent MVC AI service before initializing
+CodeQL. Its compilation uses the checked-in AI sources and inherited application/
+tracing sources through a temporary Gradle init script, so alerts retain repository
+file locations rather than pointing to uncommitted generated copies. Runtime
+dependency submission uses the composed build so the AI dependency graph is included.
 
 The raw templates deliberately keep `__PACKAGE_NAME__` and `__PACKAGE_PATH__`.
 Those are valid Java identifiers and can be compiled without running the service.
@@ -44,10 +53,10 @@ to push the reviewed change:
 4. Commit and push the reviewed files to `dev`. The push starts the new
    **CodeQL** workflow. Promote through the normal pull request to `main`;
    the weekly schedule takes effect once the workflow is on the default branch.
-5. In **Actions > CodeQL**, verify that all five Java jobs and the GitHub Actions
+5. In **Actions > CodeQL**, verify that all Java jobs and the GitHub Actions
    job succeed. In **Security > Code scanning**, inspect CodeQL's tool status and
    confirm that the new per-project analyses have no dependency-discovery or
-   duplicate-class diagnostics. Coverage is split across five databases, so each
+   duplicate-class diagnostics. Coverage is split across project databases, so each
    individual Java job is not expected to scan every Java file in the repository.
 
 Default setup blocks uploads from an advanced CodeQL workflow. If the workflow

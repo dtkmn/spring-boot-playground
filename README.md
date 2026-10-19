@@ -5,15 +5,15 @@ MVC/JPA as the default and WebFlux/R2DBC for reactive workloads.
 
 ## Release Scope
 
-This repository provides a reusable Spring service starter. The v1.0 scope covers service generation, local development, container packaging, and Kubernetes deployment.
+This repository provides a reusable Spring service starter. The v1.0 API scope covers service generation, local development, container packaging, and Kubernetes deployment.
 
 Both variants have been validated as generated services with PostgreSQL, Docker Compose, and local Kubernetes. See [adoption guidance](docs/adoption/promotion-brief.md) and the [version policy](docs/releases/version-policy.md). The current baseline is Java 21 plus Spring Boot 4.1.1.
 
-The default path is `mvc-jpa`. `webflux-r2dbc` remains the supported advanced variant for teams with a real reactive requirement. Optional integrations live under `examples/` and are intentionally outside the starter contract.
+The default path is `mvc-jpa` with `--purpose api`. `webflux-r2dbc` remains the supported advanced API variant for teams with a real reactive requirement. An experimental MVC/JPA AI purpose adds an order-support workflow for host and local Docker Compose use. Optional integrations under `examples/` remain outside the starter contract.
 
 ## Starter Contract
 
-Every starter variant should provide:
+Maintained API outputs provide:
 - Java 21 and the maintained Spring Boot 4.1.x line
 - PostgreSQL plus Flyway
 - Actuator, Prometheus metrics, and OTLP-ready tracing hooks
@@ -22,19 +22,39 @@ Every starter variant should provide:
 - test baselines suitable for CI
 - Kubernetes deployment support through Helm
 
+The experimental AI output retains the Java, database, observability, container and test baseline. It uses a local authentication fixture and does not include Helm or production deployment support.
+
 The default starter contract does not include:
 - Kafka and Kafka Streams
 - websocket ingest pipelines
 - domain-specific integrations
 - a broad demo runtime at the repository root
 
+## Generation Choices
+
+Choose `--purpose api|ai`; the default is `api`. The initial AI integration uses
+Ollama, with the installed model and endpoint configured at runtime. MCP is not
+included in generated services.
+
+| Variant | Purpose | Support | Deployment |
+| --- | --- | --- | --- |
+| `mvc-jpa` | `api` | Primary maintained API | Host, Compose, Helm |
+| `webflux-r2dbc` | `api` | Maintained advanced API | Host, Compose, Helm |
+| `mvc-jpa` | `ai` | Experimental order-support workflow | Host and local Compose |
+| `webflux-r2dbc` | `ai` | Unsupported; rejected before generation | — |
+
+API output omits Spring AI, MCP and AI credential settings. AI output includes
+an opt-in model profile; its default Order API runs without a model but requires
+fresh local authentication tokens. This fixture is not production identity.
+
 ## Repository Layout
 
-- `variants/mvc-jpa`: default starter and recommended path for most services
+- `variants/mvc-jpa`: default API starter plus experimental AI assets
 - `variants/webflux-r2dbc`: supported advanced variant for reactive workloads
 - `examples/kafka-basic`: minimal HTTP-to-Kafka example
 - `examples/kafka-streams`: isolated stream-processing example
 - `examples/binance-websocket`: websocket-to-Kafka market-data example
+- `examples/ai-mcp`: REST and read-only MCP example with optional Ollama summaries
 - `deploy/helm/spring-service-starter`: shared Kubernetes deployment chart
 - `docs/adr`: architecture decision records
 - `docs/adoption`: pilot execution guidance
@@ -94,6 +114,26 @@ separate generated copy for smoke checks when you want to keep development data.
 
 Output is created under `generated/<artifact-id>` by default.
 
+For the experimental AI workflow, generate a separate service:
+
+```bash
+./scripts/init-service.sh \
+  --variant mvc-jpa \
+  --purpose ai \
+  --service-name order-support \
+  --group-id tech.company.platform \
+  --artifact-id order-support \
+  --package-name tech.company.platform.ordersupport
+```
+
+Follow the [AI first-run instructions](variants/mvc-jpa/ai/README.md) to create
+private credentials and start the Order API, then opt in to an installed Ollama
+model. The model classifies a question as status, delay reason or clarification.
+Java performs owner-scoped read-only lookups and constructs the factual answer;
+the model receives no application records or authenticated identity and has no
+tools attached. The sample domain and local identity fixture are replaceable
+application code, not a general agent platform.
+
 The raw templates use the repository's shared Gradle wrapper. The generator
 copies that wrapper into each generated service; do not add separate wrappers
 under `variants/*/template`. In IntelliJ IDEA, import a generated service as a
@@ -109,7 +149,7 @@ the assets below.
 Generated services include:
 - application code for the selected variant
 - the starter's MIT license and copyright notice
-- `STARTER.md` with the source commit, release status, variant, and original generation options
+- `STARTER.md` with the source commit, release status, variant, purpose, model integration, generator contract, and original generation options
 - `.dockerignore` and `.gitignore`
 - `gradlew`, `gradlew.bat`, and `gradle/wrapper`
 - a starter CI workflow under `.github/workflows/ci.yml`
@@ -123,8 +163,7 @@ Generated services include:
 - `scripts/dev-smoke-test.sh` and `scripts/smoke-test.sh`
 - local env template plus opt-in structured logging and OTLP tracing hooks
 - digest-pinned distroless Java runtime running as non-root
-- a vendored Helm chart under `deploy/helm/spring-service-starter`
-- service-specific Helm values for dev, staging, and prod
+- for API output, a vendored Helm chart under `deploy/helm/spring-service-starter` and service-specific values for dev, staging, and prod
 
 For an existing service, follow the [manual upgrade guide](docs/adoption/upgrading-generated-services.md)
 to compare starter versions and apply relevant changes while preserving application code.
@@ -157,7 +196,9 @@ cd examples/kafka-basic && docker compose --env-file .env up --build
 
 ## Kubernetes And Helm
 
-The supported deployment path lives in `deploy/helm/spring-service-starter`.
+The supported Kubernetes deployment path for maintained API output lives in
+`deploy/helm/spring-service-starter`. Experimental AI output does not copy this
+chart or advertise Kubernetes deployment support.
 
 Supported chart contract:
 - `image.repository`
