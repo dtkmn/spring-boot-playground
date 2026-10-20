@@ -15,13 +15,19 @@ and model integration (`none` or `ollama`). Older records without those fields
 mean API purpose, MCP off and no model integration. This is historical origin information, not the application's current
 version or a claim that every later starter change has been applied.
 
-Use the recorded full commit as the old baseline. A version is recorded only when
-generation used a clean checkout of an exact release tag. `unreleased` may mean
+Use the recorded full commit as the old baseline. A release version is derived
+from a clean checkout of an exact release tag. `unreleased` may mean
 the checkout has no matching release tag; a shallow clone without tags can also
 cause this. Fetch the relevant tags before generation if you need the release
 label. A `modified` working tree is not reproducible from its commit alone: retain
-its changes or establish another baseline. An archive without Git metadata records
-`unknown`; preserve its original release reference and generation options yourself.
+its changes or establish another baseline. Plugin packages retain this source
+information in a build-time `STARTER_SOURCE` stamp, so generation from their
+installed cache does not require Git metadata. The plugin's own version is
+separate from the starter release version. Git-backed plugin installations use
+the Git metadata retained in their installed copy when available. A marketplace
+branch name or plugin version alone does not establish a source commit. Other archives without Git metadata
+or this stamp record `unknown`; preserve their original release reference and
+generation options yourself.
 
 Older services without `STARTER.md` need a baseline established from their own
 creation records, commits, or retained scaffold. Create an origin record from that

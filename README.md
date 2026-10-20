@@ -69,6 +69,10 @@ or WSL2.
 The generated Gradle wrapper downloads Gradle; no separate Gradle installation is
 needed. The first run also downloads dependencies and container images.
 
+The traditional clone-and-script workflow below remains supported. A local
+Codex plugin provides an additional generation entry point using the same assets;
+see [Codex plugin](#codex-plugin). Claude Code packaging is planned in #216.
+
 Start from the stabilized `main` branch in a new directory:
 
 ```bash
@@ -167,6 +171,74 @@ Generated services include:
 
 For an existing service, follow the [manual upgrade guide](docs/adoption/upgrading-generated-services.md)
 to compare starter versions and apply relevant changes while preserving application code.
+
+## Codex plugin
+
+The Java Seedworks plugin is an experimental plugin for Codex. It can
+generate the same three outputs listed above and help verify them. API support
+and the experimental AI scope remain as documented; plugin use does not add AI
+dependencies to ordinary APIs. The repository rename is tracked separately.
+
+Install directly from GitHub without cloning the repository. With a Codex CLI
+providing `plugin add` (validated with 0.163.0):
+
+```bash
+codex plugin marketplace add dtkmn/spring-boot-playground --ref main
+codex plugin add java-seedworks@java-seedworks
+codex plugin list --marketplace java-seedworks
+```
+
+For the Codex desktop app, register the GitHub marketplace with the first command,
+quit and reopen the app, then install Java Seedworks from that source in
+**Plugins**. If you already installed it with the CLI, check that it is enabled
+in the app. Start a new local conversation after installation.
+
+In a new local Codex conversation, ask:
+
+> Use Java Seedworks to generate a service named orders-api in my projects
+> directory, using PostgreSQL, tests and Docker. Ask me for any missing details.
+
+The `generate-service` skill resolves the installed assets, writes to your chosen
+new project directory, and runs the generated Gradle checks when Java 21 and
+Docker are ready. Inspect `STARTER.md` for the generation baseline. Java/Docker
+are not needed just to copy the scaffold; they are needed to build and run it.
+Use the generated README for first-run credentials and optional AI setup.
+
+Maintainers can test changes before pushing by preparing a local package. Choose
+a new directory outside the checkout whose parent already exists:
+
+```bash
+./scripts/package-plugin.sh /tmp/java-seedworks-plugin
+codex plugin marketplace add /tmp/java-seedworks-plugin
+codex plugin add java-seedworks@java-seedworks
+```
+
+The package contains the generator, templates, wrapper, license, API deployment
+assets, generation skill and marketplace catalog. It excludes local build/cache
+files and private environment files. `STARTER_SOURCE` retains the source commit,
+release label when available, and clean/modified state. A package made from a
+modified checkout retains that fact; its plugin version is not a claim that the
+starter has been released.
+
+To reinstall from updated GitHub contents, switch between GitHub and a local
+package, or change the local package path, remove the previous installation and
+marketplace first:
+
+```bash
+codex plugin remove java-seedworks@java-seedworks
+codex plugin marketplace remove java-seedworks
+```
+
+Then repeat the installation commands for your chosen source and start a new
+conversation. Maintainers should bump `plugin.json`'s version when publishing
+changed plugin assets. An installed plugin uses its cached copy; reinstalling
+does not update existing generated applications. Those applications retain the
+manual update process in the
+[upgrade guide](docs/adoption/upgrading-generated-services.md).
+
+GitHub installation does not require a release archive or an official plugin
+directory listing. The manual generator remains available without installing
+Codex.
 
 ## Variants
 
