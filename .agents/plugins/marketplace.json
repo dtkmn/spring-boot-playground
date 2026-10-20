@@ -1,0 +1,10 @@
+{
+  "name": "java-seedworks",
+  "interface": { "displayName": "Java Seedworks" },
+  "plugins": [{
+    "name": "java-seedworks",
+    "source": { "source": "local", "path": "./" },
+    "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+    "category": "Developer Tools"
+  }]
+}

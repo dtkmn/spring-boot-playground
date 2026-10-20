@@ -12,10 +12,12 @@ Usage:
     --artifact-id <artifact> \\
     --package-name <package> \\
     [--output-dir <dir>] \\
+    [--plugin] \\
     [--app-port <port>] \\
     [--management-port <port>]
 
 Purpose defaults to api. Experimental ai requires mvc-jpa and uses Ollama.
+Plugin mode requires --output-dir outside the starter installation.
 USAGE
 }
 fail() { echo "$*" >&2; exit 1; }
@@ -29,10 +31,12 @@ package_name=""
 output_dir=""
 app_port="8080"
 management_port="8081"
+plugin_mode=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help) usage; exit 0 ;;
+    --plugin) plugin_mode=true; shift ;;
     --variant|--purpose|--service-name|--group-id|--artifact-id|--package-name|--output-dir|--app-port|--management-port)
       [[ $# -ge 2 && -n "$2" && "$2" != --* ]] || fail "Missing value for $1"
       option=$1
@@ -88,6 +92,7 @@ repo_root=$(cd "$script_dir/.." && pwd -P)
 template_dir="$repo_root/variants/$variant/template"
 ai_dir="$repo_root/variants/mvc-jpa/ai"
 shared_chart_dir="$repo_root/deploy/helm/spring-service-starter"
+[[ "$plugin_mode" != true || -n "$output_dir" ]] || fail "Plugin mode requires --output-dir outside its installation"
 output_dir=${output_dir:-"$repo_root/generated/$artifact_id"}
 package_path=${package_name//./\/}
 
@@ -115,6 +120,11 @@ case "$output_dir/" in
   "$repo_root/variants/"*|"$repo_root/deploy/"*|"$repo_root/gradle/"*|"$repo_root/scripts/"*)
     fail "Output must be outside starter source assets" ;;
 esac
+if [[ "$plugin_mode" == true || -e "$repo_root/STARTER_SOURCE" || -L "$repo_root/STARTER_SOURCE" ]]; then
+  case "$output_dir/" in
+    "$repo_root/"*) fail "Plugin or packaged starter output must be outside its installation; pass --output-dir" ;;
+  esac
+fi
 
 require_file() { [[ -f "$1" && ! -L "$1" ]] || fail "Required asset missing or not a regular file: $1"; }
 common_files=(
@@ -175,25 +185,10 @@ else
   [[ "$docker_anchor_count" == 1 ]] || fail "MVC Dockerfile must have exactly one settings.gradle copy step"
 fi
 
-# Capture provenance before creating output. Archives do not inherit a containing
-# repository's identity, and modified source cannot be reproduced by commit alone.
-starter_commit="unknown"
-starter_version="unknown"
-starter_worktree="unknown"
-if [[ "$(git -C "$repo_root" rev-parse --show-toplevel 2>/dev/null || true)" == "$repo_root" ]] \
-    && starter_commit=$(git -C "$repo_root" rev-parse --verify HEAD 2>/dev/null); then
-  starter_version="unreleased"
-  starter_worktree="modified"
-  source_changes=$(git -C "$repo_root" status --porcelain --untracked-files=normal)
-  if [[ -z "$source_changes" ]]; then
-    starter_worktree="clean"
-    while IFS= read -r starter_tag; do
-      if [[ "$starter_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then starter_version="$starter_tag"; break; fi
-    done < <(git -C "$repo_root" tag --points-at HEAD --list 'v*' --sort=-version:refname)
-  fi
-else
-  starter_commit="unknown"
-fi
+# Capture provenance before creating output; packages retain their source stamp.
+# shellcheck source=starter-provenance.sh
+source "$script_dir/starter-provenance.sh"
+read_starter_provenance "$repo_root" || fail "Could not read starter source provenance"
 
 copy_assets() {
   tar -C "$1" \
@@ -268,9 +263,12 @@ model_integration="none"
 
 This records the original generation baseline, not the current application version
 or which later starter changes have been applied. Only a clean checkout with an
-exact local release tag records a release version. A modified checkout includes
+exact local release tag, or a plugin package built from one, records a release version.
+A modified checkout includes
 local changes that the recorded commit cannot reproduce; retain that source copy.
-Unknown values mean Git metadata was unavailable for this starter copy.
+Plugin packages retain their build-time source information without Git metadata.
+Git-backed plugin installations use their retained Git metadata when available.
+Unknown values mean neither Git metadata nor a packaged source stamp was available.
 
 Runtime model names, endpoints and secrets are application settings, not generation options.
 Older origin records without purpose mean API output with MCP off.

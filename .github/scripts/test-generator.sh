@@ -11,7 +11,8 @@ mkdir -p "$source_dir"
 tar -C "$repo_root" \
   --exclude='.gradle' --exclude='build' --exclude='out' --exclude='.idea' \
   --exclude='.git' --exclude='.env' --exclude='*.log' --exclude='*.iml' --exclude='.DS_Store' \
-  -cf - scripts/init-service.sh variants/mvc-jpa/template variants/webflux-r2dbc/template \
+  -cf - scripts/init-service.sh scripts/starter-provenance.sh scripts/package-plugin.sh \
+  plugin.json .agents/plugins/marketplace.json skills/generate-service variants/mvc-jpa/template variants/webflux-r2dbc/template \
   variants/mvc-jpa/ai gradlew gradlew.bat gradle/wrapper LICENSE deploy/helm/spring-service-starter \
   | tar -C "$source_dir" -xf -
 
@@ -133,4 +134,110 @@ chmod +x "$trial_dir/fault-bin/tar"
 PATH="$trial_dir/fault-bin:$PATH" expect_rejected extraction-failure
 [[ -f "$trial_dir/default/README.md" ]]
 
-echo "Generator defaults, AI selection, provenance, omission, exclusions and rejection contracts passed."
+# Package a clean tagged fixture, then run without its Git metadata from another
+# working directory. The package and manual CLI must compose the same service.
+git -C "$source_dir" init -q
+git -C "$source_dir" add .
+git -C "$source_dir" -c user.name='Generator contract' -c user.email='contract@example.invalid' \
+  -c commit.gpgsign=false commit -qm 'Disposable package fixture'
+git -C "$source_dir" tag v9.8.7
+fixture_commit=$(git -C "$source_dir" rev-parse HEAD)
+package_dir="$trial_dir/package with spaces"
+bash "$source_dir/scripts/package-plugin.sh" "$package_dir" >/dev/null
+cmp "$source_dir/.agents/plugins/marketplace.json" "$package_dir/.agents/plugins/marketplace.json"
+[[ ! -e "$package_dir/.git" && ! -e "$package_dir/variants/mvc-jpa/template/.env" ]]
+grep -Fxq "commit=$fixture_commit" "$package_dir/STARTER_SOURCE"
+grep -Fxq 'version=v9.8.7' "$package_dir/STARTER_SOURCE"
+grep -Fxq 'worktree=clean' "$package_dir/STARTER_SOURCE"
+mkdir "$trial_dir/unrelated"
+for selection in mvc-jpa:api webflux-r2dbc:api mvc-jpa:ai; do
+  variant=${selection%:*}
+  purpose=${selection#*:}
+  manual="$trial_dir/manual-$variant-$purpose"
+  packaged="$trial_dir/packaged-$variant-$purpose"
+  "$generator" --variant "$variant" --purpose "$purpose" "${coordinates[@]}" --output-dir "$manual" >/dev/null
+  (cd "$trial_dir/unrelated" && bash "$package_dir/scripts/init-service.sh" \
+    --plugin --variant "$variant" --purpose "$purpose" "${coordinates[@]}" --output-dir "$packaged") >/dev/null
+  diff -r "$manual" "$packaged" >/dev/null
+  grep -Fxq -- "- Source commit: $fixture_commit" "$packaged/STARTER.md"
+done
+
+# Git-backed installations retain Git metadata instead of a packaged stamp.
+# Plugin mode must still protect that installation, without changing the normal
+# checkout workflow. All three plugin outputs must match the canonical CLI.
+for selection in mvc-jpa:api webflux-r2dbc:api mvc-jpa:ai; do
+  variant=${selection%:*}
+  purpose=${selection#*:}
+  git_plugin="$trial_dir/git-plugin-$variant-$purpose"
+  bash "$generator" --plugin --variant "$variant" --purpose "$purpose" "${coordinates[@]}" \
+    --output-dir "$git_plugin" >/dev/null
+  diff -r "$trial_dir/manual-$variant-$purpose" "$git_plugin" >/dev/null
+done
+[[ -z "$(git -C "$source_dir" status --porcelain)" ]]
+if bash "$generator" --plugin "${common[@]}" >"$trial_dir/rejection.log" 2>&1; then
+  echo "Plugin mode accepted an implicit destination" >&2; exit 1
+fi
+ln -s "$source_dir" "$trial_dir/installation-link"
+for destination in "$source_dir/generated/unsafe" "$trial_dir/installation-link/unsafe"; do
+  if bash "$generator" --plugin "${common[@]}" --output-dir "$destination" \
+      >"$trial_dir/rejection.log" 2>&1; then
+    echo "Plugin mode accepted output inside a Git installation" >&2; exit 1
+  fi
+done
+[[ ! -e "$source_dir/generated" && ! -e "$source_dir/unsafe" ]]
+
+if bash "$source_dir/scripts/package-plugin.sh" "$package_dir" >"$trial_dir/rejection.log" 2>&1; then
+  echo "Packager overwrote an existing package" >&2; exit 1
+fi
+for destination in "$package_dir/unwanted-output" "$trial_dir/unrelated/existing"; do
+  [[ "$destination" != */existing ]] || mkdir "$destination"
+  if bash "$package_dir/scripts/init-service.sh" "${common[@]}" --output-dir "$destination" \
+      >"$trial_dir/rejection.log" 2>&1; then
+    echo "Packaged generator accepted an unsafe destination" >&2; exit 1
+  fi
+done
+[[ ! -e "$package_dir/unwanted-output" ]]
+
+# A containing checkout must not replace the stamped upstream identity.
+git -C "$trial_dir" init -q
+bash "$package_dir/scripts/init-service.sh" "${common[@]}" --output-dir "$trial_dir/inside-other-repo" >/dev/null
+grep -Fxq -- "- Source commit: $fixture_commit" "$trial_dir/inside-other-repo/STARTER.md"
+cp "$package_dir/STARTER_SOURCE" "$trial_dir/origin.saved"
+printf 'version=invalid\n' >> "$package_dir/STARTER_SOURCE"
+if bash "$package_dir/scripts/init-service.sh" "${common[@]}" --output-dir "$trial_dir/invalid-origin" \
+    >"$trial_dir/rejection.log" 2>&1; then
+  echo "Malformed package provenance was accepted" >&2; exit 1
+fi
+[[ ! -e "$trial_dir/invalid-origin" ]]
+cp "$trial_dir/origin.saved" "$package_dir/STARTER_SOURCE"
+
+mkdir "$trial_dir/git-fault-bin"
+cat > "$trial_dir/git-fault-bin/git" <<'GIT_FAILURE'
+#!/usr/bin/env bash
+[[ "$3" != status ]] || exit 77
+exec "$STARTER_CONTRACT_GIT" "$@"
+GIT_FAILURE
+chmod +x "$trial_dir/git-fault-bin/git"
+if STARTER_CONTRACT_GIT="$(command -v git)" PATH="$trial_dir/git-fault-bin:$PATH" \
+    bash "$generator" "${common[@]}" --output-dir "$trial_dir/status-failure" \
+    >"$trial_dir/rejection.log" 2>&1; then
+  echo "Git status failure was reported as a clean source" >&2; exit 1
+fi
+[[ ! -e "$trial_dir/status-failure" ]]
+
+printf '\nDisposable local change\n' >> "$source_dir/variants/mvc-jpa/template/README.md"
+bash "$source_dir/scripts/package-plugin.sh" "$trial_dir/modified-package" >/dev/null
+grep -Fxq 'worktree=modified' "$trial_dir/modified-package/STARTER_SOURCE"
+grep -Fxq 'version=unreleased' "$trial_dir/modified-package/STARTER_SOURCE"
+
+if PATH="$trial_dir/fault-bin:$PATH" bash "$source_dir/scripts/package-plugin.sh" "$trial_dir/failed-package" \
+    >"$trial_dir/rejection.log" 2>&1; then
+  echo "Packager ignored an extraction failure" >&2; exit 1
+fi
+[[ ! -e "$trial_dir/failed-package" && -f "$package_dir/STARTER_SOURCE" ]]
+
+# The traditional checkout still supports its default generated/ destination.
+bash "$generator" "${common[@]}" >/dev/null
+[[ -f "$source_dir/generated/contract-service/STARTER.md" ]]
+
+echo "Generator and plugin packaging: selection, parity, provenance, exclusions and rejection contracts passed."

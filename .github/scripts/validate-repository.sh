@@ -64,6 +64,11 @@ required_paths=(
   "docs/security/supply-chain-baseline.md"
   "RELEASING.md"
   "scripts/init-service.sh"
+  "scripts/starter-provenance.sh"
+  "scripts/package-plugin.sh"
+  "plugin.json"
+  ".agents/plugins/marketplace.json"
+  "skills/generate-service/SKILL.md"
   ".github/scripts/test-generator.sh"
 )
 
