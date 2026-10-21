@@ -1,8 +1,8 @@
-# Spring Service Starter Promotion Brief
+# Java Seedworks Promotion Brief
 
 ## Status
 
-The starter's [v1.0.0 release](https://github.com/dtkmn/spring-boot-playground/releases/tag/v1.0.0) is available. Both variants have passed generated-service trials covering tests, Docker Compose, Kubernetes deployment, API behavior, and persistence after restart.
+The starter's [v1.0.0 release](https://github.com/dtkmn/java-seedworks/releases/tag/v1.0.0) is available. Both variants have passed generated-service trials covering tests, Docker Compose, Kubernetes deployment, API behavior, and persistence after restart.
 
 These checks establish a working baseline. Each adopting service still needs its own production configuration and operational review.
 
@@ -27,7 +27,7 @@ Service-specific responsibilities include:
 
 ## Promotion Message
 
-> This starter provides a repeatable Spring Boot 4.1 and Java 21 service baseline with local development, tests, container packaging, Helm scaffolding, and release workflows. Choose MVC/JPA by default or WebFlux/R2DBC for a reactive service, then add your domain features.
+> Java Seedworks provides a repeatable Spring Boot 4.1 and Java 21 service baseline with local development, tests, container packaging, Helm scaffolding, and release workflows. Choose MVC/JPA by default or WebFlux/R2DBC for a reactive service, then add your domain features.
 
 ## Adoption Rules
 

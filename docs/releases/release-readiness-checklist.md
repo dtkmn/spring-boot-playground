@@ -74,7 +74,7 @@ done
 : "${VERSION:?Set VERSION to the release tag, for example v1.0.0}"
 git checkout main
 git pull --ff-only
-git tag -a "$VERSION" -m "Spring Service Starter $VERSION"
+git tag -a "$VERSION" -m "Java Seedworks $VERSION"
 git push origin "$VERSION"
 ```
 

@@ -51,7 +51,7 @@ of the upstream URL below. In Bash, prepare separate checkouts outside the appli
 old_ref='<full source commit from STARTER.md>'
 target_ref='<chosen release tag or full commit>'
 upgrade_dir=$(mktemp -d "${TMPDIR:-/tmp}/starter-upgrade.XXXXXX")
-git clone https://github.com/dtkmn/spring-boot-playground.git "$upgrade_dir/starter"
+git clone https://github.com/dtkmn/java-seedworks.git "$upgrade_dir/starter"
 git -C "$upgrade_dir/starter" worktree add --detach "$upgrade_dir/old-source" "$old_ref"
 git -C "$upgrade_dir/starter" worktree add --detach "$upgrade_dir/new-source" "$target_ref"
 git -C "$upgrade_dir/new-source" rev-parse HEAD
