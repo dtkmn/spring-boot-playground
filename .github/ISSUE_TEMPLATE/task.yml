@@ -1,5 +1,5 @@
 name: Task
-description: Concrete implementation task for the Spring service starter
+description: Concrete implementation task for Java Seedworks
 labels: ["kind:task"]
 body:
   - type: input

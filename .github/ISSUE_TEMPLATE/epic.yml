@@ -1,5 +1,5 @@
 name: Epic
-description: Strategic body of work for the Spring service starter
+description: Strategic body of work for Java Seedworks
 labels: ["kind:epic"]
 body:
   - type: input
