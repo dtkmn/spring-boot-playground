@@ -2,11 +2,11 @@
 
 ## Purpose
 
-This public repository provides a practical Spring service starter. Contributions
-should make generated services easier to adopt and maintain. Optional integrations
-belong in `examples/` so the core starter stays focused.
+Java Seedworks provides practical Java service templates using Spring Boot.
+Contributions should make generated services easier to adopt and maintain.
+Optional integrations belong in `examples/` so the core starter stays focused.
 
-Start with the [open issues](https://github.com/dtkmn/spring-boot-playground/issues)
+Start with the [open issues](https://github.com/dtkmn/java-seedworks/issues)
 and their scope and acceptance criteria. Comment on the issue before starting
 substantial work to coordinate with other contributors. Use the root README's
 generation command from your modified working branch so validation exercises

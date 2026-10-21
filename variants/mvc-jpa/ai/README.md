@@ -1,8 +1,9 @@
 # __SERVICE_NAME__
 
-An experimental Java 21 MVC/JPA order-support service with PostgreSQL, Flyway and
-optional Spring AI/Ollama classification. It supports host development and local
-Docker Compose. It does not include a Helm chart or production authentication.
+An experimental MVC/JPA order-support service generated from Java Seedworks,
+using Java 21, PostgreSQL, Flyway and optional Spring AI/Ollama classification.
+It supports host development and local Docker Compose. It does not include a
+Helm chart or production authentication.
 
 The copied scaffold uses the [MIT License](LICENSE). Preserve its copyright and
 permission notice; third-party components retain their own licenses. See
@@ -186,6 +187,6 @@ available; configure collectors and sampling through environment settings.
 
 This experimental output has no MCP adapter or Helm deployment. See [SUPPORT.md](SUPPORT.md)
 for its scope and [RELEASING.md](RELEASING.md) for the application release workflow.
-Follow the [manual upgrade guide](https://github.com/dtkmn/spring-boot-playground/blob/main/docs/adoption/upgrading-generated-services.md)
+Follow the [manual upgrade guide](https://github.com/dtkmn/java-seedworks/blob/main/docs/adoption/upgrading-generated-services.md)
 when adopting newer starter assets; copied services receive no automatic source
 updates. Preserve the original [STARTER.md](STARTER.md) and record adopted changes.
