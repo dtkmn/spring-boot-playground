@@ -1,10 +1,10 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "java-seedworks",
-  "version": "0.1.0-dev",
+  "version": "0.1.1-dev",
   "description": "Generate and verify Java services with the shared MVC/JPA, WebFlux/R2DBC and experimental local AI starters.",
   "author": { "name": "dtkmn" },
-  "repository": "https://github.com/dtkmn/spring-boot-playground",
+  "repository": "https://github.com/dtkmn/java-seedworks",
   "license": "MIT",
   "extensions": {
     "com.openai": {

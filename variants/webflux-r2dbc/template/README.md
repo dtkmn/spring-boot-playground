@@ -1,6 +1,6 @@
 # __SERVICE_NAME__
 
-Spring WebFlux + R2DBC starter service generated from the Spring Service Starter repository.
+Spring WebFlux + R2DBC starter service generated from Java Seedworks.
 
 The copied starter scaffold is covered by the [MIT License](LICENSE). Retain its
 copyright and permission notice when distributing copies or substantial portions.
@@ -184,7 +184,7 @@ Optional hardening values include service-account controls, pod annotations, pod
 ## Starter updates
 
 [STARTER.md](STARTER.md) records this scaffold's origin and original generation
-options. Follow the [manual upgrade guide](https://github.com/dtkmn/spring-boot-playground/blob/main/docs/adoption/upgrading-generated-services.md)
+options. Follow the [manual upgrade guide](https://github.com/dtkmn/java-seedworks/blob/main/docs/adoption/upgrading-generated-services.md)
 to adopt newer starter changes while preserving application code. Dependency
 updates do not synchronize copied code, workflows, scripts, or Helm assets.
 

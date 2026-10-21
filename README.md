@@ -1,7 +1,16 @@
-# Spring Service Starter
+# Java Seedworks
 
-`spring-boot-playground` is a practical, public starter for Spring services, with
-MVC/JPA as the default and WebFlux/R2DBC for reactive workloads.
+Java backend service templates with Spring Boot, PostgreSQL, tests, containers
+and Helm. MVC/JPA is the default; WebFlux/R2DBC supports reactive workloads.
+
+Previously `dtkmn/spring-boot-playground`. Update existing clones with:
+
+```bash
+git remote set-url origin https://github.com/dtkmn/java-seedworks.git
+```
+
+Your local directory can keep its existing name. For installed Codex plugins,
+follow the [source migration instructions](#codex-plugin) below.
 
 ## Release Scope
 
@@ -76,8 +85,8 @@ see [Codex plugin](#codex-plugin). Claude Code packaging is planned in #216.
 Start from the stabilized `main` branch in a new directory:
 
 ```bash
-git clone --branch main --depth 1 https://github.com/dtkmn/spring-boot-playground.git
-cd spring-boot-playground
+git clone --branch main --depth 1 https://github.com/dtkmn/java-seedworks.git
+cd java-seedworks
 ./scripts/init-service.sh \
   --variant mvc-jpa \
   --service-name customer-profile \
@@ -177,13 +186,13 @@ to compare starter versions and apply relevant changes while preserving applicat
 The Java Seedworks plugin is an experimental plugin for Codex. It can
 generate the same three outputs listed above and help verify them. API support
 and the experimental AI scope remain as documented; plugin use does not add AI
-dependencies to ordinary APIs. The repository rename is tracked separately.
+dependencies to ordinary APIs.
 
 Install directly from GitHub without cloning the repository. With a Codex CLI
 providing `plugin add` (validated with 0.163.0):
 
 ```bash
-codex plugin marketplace add dtkmn/spring-boot-playground --ref main
+codex plugin marketplace add dtkmn/java-seedworks --ref main
 codex plugin add java-seedworks@java-seedworks
 codex plugin list --marketplace java-seedworks
 ```
@@ -220,9 +229,10 @@ release label when available, and clean/modified state. A package made from a
 modified checkout retains that fact; its plugin version is not a claim that the
 starter has been released.
 
-To reinstall from updated GitHub contents, switch between GitHub and a local
-package, or change the local package path, remove the previous installation and
-marketplace first:
+If your marketplace uses the former `dtkmn/spring-boot-playground` source,
+remove the previous installation and marketplace first. Use the same steps to
+reinstall from updated GitHub contents, switch between GitHub and a local
+package, or change the local package path:
 
 ```bash
 codex plugin remove java-seedworks@java-seedworks

@@ -159,6 +159,8 @@ for selection in mvc-jpa:api webflux-r2dbc:api mvc-jpa:ai; do
   (cd "$trial_dir/unrelated" && bash "$package_dir/scripts/init-service.sh" \
     --plugin --variant "$variant" --purpose "$purpose" "${coordinates[@]}" --output-dir "$packaged") >/dev/null
   diff -r "$manual" "$packaged" >/dev/null
+  grep -Fxq -- '- Upstream repository: https://github.com/dtkmn/java-seedworks' "$packaged/STARTER.md"
+  grep -Fq 'https://github.com/dtkmn/java-seedworks/blob/main/docs/adoption/upgrading-generated-services.md' "$packaged/STARTER.md"
   grep -Fxq -- "- Source commit: $fixture_commit" "$packaged/STARTER.md"
 done
 

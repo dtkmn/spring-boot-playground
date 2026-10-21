@@ -251,7 +251,7 @@ model_integration="none"
   cat <<EOF
 # Starter origin
 
-- Upstream repository: https://github.com/dtkmn/spring-boot-playground
+- Upstream repository: https://github.com/dtkmn/java-seedworks
 - Source commit: $starter_commit
 - Source version: $starter_version
 - Working tree: $starter_worktree
@@ -285,7 +285,7 @@ EOF
     artifact-id "$artifact_id" package-name "$package_name" app-port "$app_port" management-port "$management_port"
   printf '\n\140\140\140\n\n'
   cat <<'EOF'
-For manual updates, follow the [upgrade guide](https://github.com/dtkmn/spring-boot-playground/blob/main/docs/adoption/upgrading-generated-services.md).
+For manual updates, follow the [upgrade guide](https://github.com/dtkmn/java-seedworks/blob/main/docs/adoption/upgrading-generated-services.md).
 Keep this origin record and append the target commit and selected changes after
 each upgrade; replacing it with a new sample's record would lose the original baseline.
 Preserve applied Flyway migration history; never replace a downstream schema with a fresh sample.
