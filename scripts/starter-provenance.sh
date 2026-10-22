@@ -2,7 +2,8 @@
 
 # Shared by generation and packaging. A package carries data, never shell code.
 read_starter_provenance() {
-  local source_root=$1 key value source_changes seen=" "
+  local source_root=$1 supplied_commit=${2:-} key value source_changes seen=" "
+  [[ -z "$supplied_commit" || "$supplied_commit" =~ ^[0-9a-f]{40}$ || "$supplied_commit" =~ ^[0-9a-f]{64}$ ]] || return 1
   starter_commit="unknown"
   starter_version="unknown"
   starter_worktree="unknown"
@@ -38,5 +39,9 @@ read_starter_provenance() {
     fi
   else
     starter_commit="unknown"
+  fi
+  if [[ -n "$supplied_commit" ]]; then
+    [[ "$starter_commit" == unknown || "$starter_commit" == "$supplied_commit" ]] || return 1
+    starter_commit=$supplied_commit
   fi
 }

@@ -17,7 +17,8 @@ case "$destination/" in "$repo_root/"*) fail "Package must be outside the source
 source "$script_dir/starter-provenance.sh"
 read_starter_provenance "$repo_root" || fail "Could not read starter source provenance"
 assets=(
-  plugin.json .agents/plugins/marketplace.json skills/generate-service scripts/init-service.sh scripts/starter-provenance.sh
+  plugin.json .agents/plugins/marketplace.json .claude-plugin/plugin.json .claude-plugin/marketplace.json
+  skills/generate-service scripts/init-service.sh scripts/starter-provenance.sh
   variants/mvc-jpa/template variants/mvc-jpa/ai variants/webflux-r2dbc/template
   deploy/helm/spring-service-starter gradlew gradlew.bat gradle/wrapper LICENSE
 )
