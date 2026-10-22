@@ -13,11 +13,13 @@ Usage:
     --package-name <package> \\
     [--output-dir <dir>] \\
     [--plugin] \\
+    [--source-commit <full-commit>] \\
     [--app-port <port>] \\
     [--management-port <port>]
 
 Purpose defaults to api. Experimental ai requires mvc-jpa and uses Ollama.
 Plugin mode requires --output-dir outside the starter installation.
+Source commit can identify an installation without Git; it must agree with any known origin.
 USAGE
 }
 fail() { echo "$*" >&2; exit 1; }
@@ -32,12 +34,13 @@ output_dir=""
 app_port="8080"
 management_port="8081"
 plugin_mode=false
+source_commit=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help) usage; exit 0 ;;
     --plugin) plugin_mode=true; shift ;;
-    --variant|--purpose|--service-name|--group-id|--artifact-id|--package-name|--output-dir|--app-port|--management-port)
+    --variant|--purpose|--service-name|--group-id|--artifact-id|--package-name|--output-dir|--app-port|--management-port|--source-commit)
       [[ $# -ge 2 && -n "$2" && "$2" != --* ]] || fail "Missing value for $1"
       option=$1
       value=$2
@@ -51,6 +54,7 @@ while [[ $# -gt 0 ]]; do
         --output-dir) output_dir=$value ;;
         --app-port) app_port=$value ;;
         --management-port) management_port=$value ;;
+        --source-commit) source_commit=$value ;;
       esac
       shift 2
       ;;
@@ -188,7 +192,7 @@ fi
 # Capture provenance before creating output; packages retain their source stamp.
 # shellcheck source=starter-provenance.sh
 source "$script_dir/starter-provenance.sh"
-read_starter_provenance "$repo_root" || fail "Could not read starter source provenance"
+read_starter_provenance "$repo_root" "$source_commit" || fail "Could not read starter source provenance; supplied commit must be full-length and match any known origin"
 
 copy_assets() {
   tar -C "$1" \
@@ -269,6 +273,8 @@ local changes that the recorded commit cannot reproduce; retain that source copy
 Plugin packages retain their build-time source information without Git metadata.
 Git-backed plugin installations use their retained Git metadata when available.
 Unknown values mean neither Git metadata nor a packaged source stamp was available.
+A supplied installation commit identifies the source baseline but does not establish
+a release version or the current state of cached files.
 
 Runtime model names, endpoints and secrets are application settings, not generation options.
 Older origin records without purpose mean API output with MCP off.

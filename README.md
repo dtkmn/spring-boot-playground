@@ -78,9 +78,9 @@ or WSL2.
 The generated Gradle wrapper downloads Gradle; no separate Gradle installation is
 needed. The first run also downloads dependencies and container images.
 
-The traditional clone-and-script workflow below remains supported. A local
-Codex plugin provides an additional generation entry point using the same assets;
-see [Codex plugin](#codex-plugin). Claude Code packaging is planned in #216.
+The traditional clone-and-script workflow below remains supported. The
+[Codex](#codex-plugin) and [Claude Code](#claude-code-plugin) plugins provide
+additional generation entry points using the same assets.
 
 Start from the stabilized `main` branch in a new directory:
 
@@ -249,6 +249,53 @@ manual update process in the
 GitHub installation does not require a release archive or an official plugin
 directory listing. The manual generator remains available without installing
 Codex.
+
+## Claude Code plugin
+
+The experimental Claude Code adapter uses the same `generate-service` skill,
+generator and assets as the Codex plugin. It supports the same three generation
+choices and support boundaries above. Ordinary API output adds no runtime AI.
+Generation needs Bash and standard Unix tools; Java 21 and Docker are needed
+for the generated checks and application.
+
+With Claude Code installed, register the GitHub marketplace and install:
+
+```bash
+claude plugin marketplace add 'dtkmn/java-seedworks#main'
+claude plugin install java-seedworks@java-seedworks
+claude plugin list
+```
+
+Start a new Claude Code session in your workspace, then invoke the skill:
+
+```text
+/java-seedworks:generate-service Create a customer-profile MVC/JPA API in my projects directory with PostgreSQL, tests and Docker. Ask me for any missing details.
+```
+
+Choose a new destination outside the plugin installation. The skill gathers
+missing coordinates and runs `./gradlew check bootJar` when prerequisites are
+ready. The API begins with the Customer sample domain; follow the generated
+README to run or adapt it and inspect `STARTER.md` for its source baseline.
+
+For local testing before pushing, prepare a new package with
+`./scripts/package-plugin.sh /tmp/java-seedworks-plugin` as described above,
+then register that directory instead of the GitHub source:
+
+```bash
+claude plugin marketplace add /tmp/java-seedworks-plugin
+claude plugin install java-seedworks@java-seedworks
+```
+
+For updates, refresh the marketplace and installed plugin, then start a new
+session:
+
+```bash
+claude plugin marketplace update java-seedworks
+claude plugin update java-seedworks@java-seedworks
+```
+
+An update changes the installed starter, not services already generated from it.
+Those services follow the [manual upgrade guide](docs/adoption/upgrading-generated-services.md).
 
 ## Variants
 

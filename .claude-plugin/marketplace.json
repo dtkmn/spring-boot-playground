@@ -1,0 +1,9 @@
+{
+  "name": "java-seedworks",
+  "description": "Generate Java services with the shared Java Seedworks starter.",
+  "owner": { "name": "dtkmn" },
+  "plugins": [{
+    "name": "java-seedworks",
+    "source": "./"
+  }]
+}

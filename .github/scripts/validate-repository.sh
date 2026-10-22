@@ -68,6 +68,8 @@ required_paths=(
   "scripts/package-plugin.sh"
   "plugin.json"
   ".agents/plugins/marketplace.json"
+  ".claude-plugin/plugin.json"
+  ".claude-plugin/marketplace.json"
   "skills/generate-service/SKILL.md"
   ".github/scripts/test-generator.sh"
 )
@@ -114,5 +116,19 @@ done
 if [[ "$failures" -ne 0 ]]; then
   exit 1
 fi
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+codex = json.loads(Path('plugin.json').read_text())
+claude = json.loads(Path('.claude-plugin/plugin.json').read_text())
+for key in ('name', 'version', 'description', 'author', 'repository', 'license'):
+    assert codex[key] == claude[key], f'Plugin metadata differs between clients: {key}'
+for catalog in ('.agents/plugins/marketplace.json', '.claude-plugin/marketplace.json'):
+    marketplace = json.loads(Path(catalog).read_text())
+    assert marketplace['name'] == codex['name'], f'Marketplace identity differs: {catalog}'
+    assert [plugin['name'] for plugin in marketplace['plugins']] == [codex['name']], catalog
+PY
 
 echo "Repository layout and starter contracts are valid."

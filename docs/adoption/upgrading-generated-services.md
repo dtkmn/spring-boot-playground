@@ -29,6 +29,12 @@ branch name or plugin version alone does not establish a source commit. Other ar
 or this stamp record `unknown`; preserve their original release reference and
 generation options yourself.
 
+Claude Code can omit Git metadata from its installed cache. Its skill can pass
+the full source commit from an installation record that matches the exact cache
+path and plugin version, using `--source-commit`. This identifies the baseline;
+source version and working-tree state remain `unknown` without Git or a packaged
+stamp. The installation record does not prove that cached files are unchanged.
+
 Older services without `STARTER.md` need a baseline established from their own
 creation records, commits, or retained scaffold. Create an origin record from that
 evidence before adding upgrade notes. Do not guess a release from the current

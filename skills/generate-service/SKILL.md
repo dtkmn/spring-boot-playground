@@ -35,7 +35,8 @@ requirements before writing output. Ports default to `8080` and `8081`.
 
 ## Run the bundled generator
 
-Locate this skill's absolute `SKILL.md` path from the loaded skill. Set
+Locate this skill's absolute `SKILL.md` path from the loaded path, or append
+`/SKILL.md` to the skill directory supplied by the client. Set
 `skill_file` to that path and derive the plugin root from it, independently of
 the shell working directory:
 
@@ -48,6 +49,13 @@ installation/cache. The generator rejects existing directories and symlinks.
 Generation needs Bash, `tar`, `find` and standard Unix tools on macOS, Linux or
 WSL2. Java and Docker are needed for verification, not for copying the scaffold.
 
+Claude Code can strip Git metadata from its installed copy. If both Git and
+`STARTER_SOURCE` are absent, inspect `installed_plugins.json` in the plugin cache
+parent (the directory containing `cache/`). Use `gitCommitSha` only from an
+unambiguous `java-seedworks@java-seedworks` entry whose physical `installPath`
+and plugin version match this installation. A missing, malformed or ambiguous
+record leaves provenance unknown. Do not edit the cache or infer cleanliness.
+
 Set the selected values and pass them as quoted arguments:
 
 ```bash
@@ -59,6 +67,8 @@ generator_args=(
   --output-dir "$output_dir"
 )
 # Append --app-port / --management-port when the user selected other ports.
+# If the matching installation record supplied a full commit, append:
+# generator_args+=(--source-commit "$installed_source_commit")
 bash "$plugin_root/scripts/init-service.sh" "${generator_args[@]}"
 ```
 
@@ -84,4 +94,6 @@ verification results and relevant first-run commands. Describe source version,
 commit and working-tree state as recorded in `STARTER.md`; a development plugin
 version does not establish a released starter baseline.
 Git-backed installs can retain Git metadata; if neither that metadata nor a
-packaged source stamp is available, report `unknown` rather than guessing.
+packaged source stamp is available, an installation record can identify the
+commit through `--source-commit`. Version and cache state remain `unknown`.
+Without a matching record, report `unknown` rather than guessing.

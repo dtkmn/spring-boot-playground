@@ -12,7 +12,8 @@ tar -C "$repo_root" \
   --exclude='.gradle' --exclude='build' --exclude='out' --exclude='.idea' \
   --exclude='.git' --exclude='.env' --exclude='*.log' --exclude='*.iml' --exclude='.DS_Store' \
   -cf - scripts/init-service.sh scripts/starter-provenance.sh scripts/package-plugin.sh \
-  plugin.json .agents/plugins/marketplace.json skills/generate-service variants/mvc-jpa/template variants/webflux-r2dbc/template \
+  plugin.json .agents/plugins/marketplace.json .claude-plugin/plugin.json .claude-plugin/marketplace.json \
+  skills/generate-service variants/mvc-jpa/template variants/webflux-r2dbc/template \
   variants/mvc-jpa/ai gradlew gradlew.bat gradle/wrapper LICENSE deploy/helm/spring-service-starter \
   | tar -C "$source_dir" -xf -
 
@@ -85,6 +86,9 @@ expect_rejected() {
 
 expect_rejected unknown --not-a-choice value
 expect_rejected missing-value --purpose
+expect_rejected missing-source-commit --source-commit
+expect_rejected malformed-source-commit --source-commit main
+expect_rejected short-source-commit --source-commit deadbeef
 expect_rejected unsupported-purpose --purpose agent
 expect_rejected unsupported-mcp --mcp on
 expect_rejected unsupported-variant --variant quarkus
@@ -99,6 +103,19 @@ expect_rejected port-range --management-port 65536
 expect_rejected port-text --app-port invalid
 expect_rejected equal-ports --management-port 8080
 expect_rejected equal-normalized-ports --management-port 08080
+
+# A cache without Git/stamp can carry a full installation-provided commit,
+# while its version and current file state remain unknown. No runtime is needed.
+grep -Fxq -- '- Source commit: unknown' "$trial_dir/default/STARTER.md"
+for supplied_commit in 0123456789abcdef0123456789abcdef01234567 \
+    0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef; do
+  destination="$trial_dir/installation-origin-${#supplied_commit}"
+  JAVA_HOME="$trial_dir/missing-jdk" DOCKER_HOST="unix://$trial_dir/missing-docker" \
+    bash "$generator" "${common[@]}" --source-commit "$supplied_commit" --output-dir "$destination" >/dev/null
+  grep -Fxq -- "- Source commit: $supplied_commit" "$destination/STARTER.md"
+  grep -Fxq -- '- Source version: unknown' "$destination/STARTER.md"
+  grep -Fxq -- '- Working tree: unknown' "$destination/STARTER.md"
+done
 
 # Existing files/links and source assets must survive rejected output paths.
 printf 'keep this parent\n' > "$trial_dir/file-parent"
@@ -145,6 +162,8 @@ fixture_commit=$(git -C "$source_dir" rev-parse HEAD)
 package_dir="$trial_dir/package with spaces"
 bash "$source_dir/scripts/package-plugin.sh" "$package_dir" >/dev/null
 cmp "$source_dir/.agents/plugins/marketplace.json" "$package_dir/.agents/plugins/marketplace.json"
+cmp "$source_dir/.claude-plugin/plugin.json" "$package_dir/.claude-plugin/plugin.json"
+cmp "$source_dir/.claude-plugin/marketplace.json" "$package_dir/.claude-plugin/marketplace.json"
 [[ ! -e "$package_dir/.git" && ! -e "$package_dir/variants/mvc-jpa/template/.env" ]]
 grep -Fxq "commit=$fixture_commit" "$package_dir/STARTER_SOURCE"
 grep -Fxq 'version=v9.8.7' "$package_dir/STARTER_SOURCE"
@@ -167,6 +186,17 @@ done
 # Git-backed installations retain Git metadata instead of a packaged stamp.
 # Plugin mode must still protect that installation, without changing the normal
 # checkout workflow. All three plugin outputs must match the canonical CLI.
+matching="$trial_dir/matching-source-commit"
+bash "$generator" "${common[@]}" --source-commit "$fixture_commit" --output-dir "$matching" >/dev/null
+diff -r "$trial_dir/manual-mvc-jpa-api" "$matching" >/dev/null
+conflicting_commit=0000000000000000000000000000000000000000
+expect_rejected conflicting-git-commit --source-commit "$conflicting_commit"
+if bash "$package_dir/scripts/init-service.sh" "${common[@]}" --source-commit "$conflicting_commit" \
+    --output-dir "$trial_dir/conflicting-package-commit" >"$trial_dir/rejection.log" 2>&1; then
+  echo "Supplied commit overrode stamped provenance" >&2; exit 1
+fi
+[[ ! -e "$trial_dir/conflicting-package-commit" ]]
+
 for selection in mvc-jpa:api webflux-r2dbc:api mvc-jpa:ai; do
   variant=${selection%:*}
   purpose=${selection#*:}
