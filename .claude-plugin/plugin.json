@@ -1,0 +1,8 @@
+{
+  "name": "java-seedworks",
+  "version": "0.1.2-dev",
+  "description": "Generate and verify Java services with the shared MVC/JPA, WebFlux/R2DBC and experimental local AI starters.",
+  "author": { "name": "dtkmn" },
+  "repository": "https://github.com/dtkmn/java-seedworks",
+  "license": "MIT"
+}
