@@ -104,7 +104,7 @@ jobs:
             --no-daemon --no-build-cache --no-configuration-cache
 
       - name: Analyze Java
-        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4
+        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
         with:
           category: /language:java-kotlin/project:${{ matrix.project }}
 
@@ -125,6 +125,6 @@ jobs:
           build-mode: none
 
       - name: Analyze GitHub Actions
-        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4
+        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
         with:
           category: /language:actions
